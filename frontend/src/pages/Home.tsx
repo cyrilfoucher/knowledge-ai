@@ -1,5 +1,7 @@
+import PageHeader from "../layouts/PageHeader";
+
 function Home() {
-  return <h1>Accueil</h1>;
+  return <PageHeader title="Accueil" />;
 }
 
 export default Home;
