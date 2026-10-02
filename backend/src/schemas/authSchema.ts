@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const registerSchema = z.object({
+export const RegisterSchema = z.object({
   email: z.string().trim().pipe(z.email("Adresse email invalide")),
   password: z
     .string()
@@ -16,4 +16,11 @@ export const registerSchema = z.object({
     .toUpperCase(),
 });
 
-export type RegisterInput = z.infer<typeof registerSchema>;
+export type RegisterInput = z.infer<typeof RegisterSchema>;
+
+export const LoginSchema = z.object({
+  email: z.string().trim().pipe(z.email("Adresse email invalide")),
+  password: z.string().min(1, "Le mot de passe est obligatoire"),
+});
+
+export type LoginInput = z.infer<typeof LoginSchema>;
