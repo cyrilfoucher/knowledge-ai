@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import AppError from "../errors/AppError.js";
+import { z, ZodError } from "zod";
 
 function ErrorMiddleware(
   error: unknown,
@@ -11,6 +12,15 @@ function ErrorMiddleware(
     return res
       .status(error.statusCode)
       .json({ success: false, message: error.message });
+  }
+  if (error instanceof ZodError) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Données saisies invalides",
+        errors: z.flattenError(error).fieldErrors,
+      });
   }
   return res
     .status(500)
