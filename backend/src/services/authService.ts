@@ -43,3 +43,21 @@ export async function loginUser(data: LoginInput) {
   const { passwordHash, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }
+export async function getCurrentUser(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      role: true,
+    },
+  });
+  if (!user) {
+    throw new AppError("Utilisateur introuvable", 404);
+  }
+  return user;
+}
