@@ -24,3 +24,10 @@ export const LoginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof LoginSchema>;
+
+export const UpdateProfileSchema = RegisterSchema.pick({
+  email: true,
+  name: true,
+}).partial();
+
+export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;

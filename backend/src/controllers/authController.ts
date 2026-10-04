@@ -1,9 +1,14 @@
 import type { Request, Response } from "express";
-import { RegisterSchema, LoginSchema } from "../schemas/authSchema.js";
+import {
+  RegisterSchema,
+  LoginSchema,
+  UpdateProfileSchema,
+} from "../schemas/authSchema.js";
 import {
   registerUser,
   loginUser,
   getCurrentUser,
+  updateCurrentUser,
 } from "../services/authService.js";
 import { signToken } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
@@ -44,4 +49,15 @@ export function logoutController(req: Request, res: Response) {
     })
     .status(200)
     .json({ message: "Déconnexion réussie" });
+}
+
+export async function updateMeController(req: Request, res: Response) {
+  if (!req.user) {
+    throw new AppError("Vous devez être connecté", 401);
+  }
+  const data = UpdateProfileSchema.parse(req.body);
+  const user = await updateCurrentUser(req.user.userId, data);
+  return res
+    .status(200)
+    .json({ message: "Modification(s) effectuée(s) avec succès", user });
 }

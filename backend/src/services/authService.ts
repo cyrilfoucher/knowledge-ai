@@ -1,5 +1,9 @@
 import AppError from "../errors/AppError.js";
-import type { RegisterInput, LoginInput } from "../schemas/authSchema.js";
+import type {
+  RegisterInput,
+  LoginInput,
+  UpdateProfileInput,
+} from "../schemas/authSchema.js";
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 
@@ -60,4 +64,36 @@ export async function getCurrentUser(userId: string) {
     throw new AppError("Utilisateur introuvable", 404);
   }
   return user;
+}
+
+export async function updateCurrentUser(
+  userId: string,
+  data: UpdateProfileInput,
+) {
+  if (data.email) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      throw new AppError("Cette adresse email est déjà utilisée", 409);
+    }
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      email: data.email,
+      name: data.name,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      role: true,
+    },
+  });
+
+  return updatedUser;
 }
