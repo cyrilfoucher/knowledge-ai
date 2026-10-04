@@ -31,3 +31,9 @@ export const UpdateProfileSchema = RegisterSchema.pick({
 }).partial();
 
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
+
+export const UpdatePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Le mot de passe est obligatoire"),
+  newPassword: RegisterSchema.shape.password,
+});
+export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;

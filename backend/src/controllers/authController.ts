@@ -3,12 +3,14 @@ import {
   RegisterSchema,
   LoginSchema,
   UpdateProfileSchema,
+  UpdatePasswordSchema,
 } from "../schemas/authSchema.js";
 import {
   registerUser,
   loginUser,
   getCurrentUser,
   updateCurrentUser,
+  updatePassword,
 } from "../services/authService.js";
 import { signToken } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
@@ -60,4 +62,13 @@ export async function updateMeController(req: Request, res: Response) {
   return res
     .status(200)
     .json({ message: "Modification(s) effectuée(s) avec succès", user });
+}
+
+export async function updatePasswordController(req: Request, res: Response) {
+  if (!req.user) {
+    throw new AppError("Vous devez être connecté", 401);
+  }
+  const data = UpdatePasswordSchema.parse(req.body);
+  await updatePassword(req.user.userId, data);
+  return res.status(200).json({ message: "Mot de passe modifié avec succès" });
 }

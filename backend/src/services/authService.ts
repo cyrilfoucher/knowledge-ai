@@ -3,6 +3,7 @@ import type {
   RegisterInput,
   LoginInput,
   UpdateProfileInput,
+  UpdatePasswordInput,
 } from "../schemas/authSchema.js";
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
@@ -96,4 +97,32 @@ export async function updateCurrentUser(
   });
 
   return updatedUser;
+}
+
+export async function updatePassword(
+  userId: string,
+  data: UpdatePasswordInput,
+) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) {
+    throw new AppError("Aucun utilisateur trouvé", 404);
+  }
+  const passwordVerif = await bcrypt.compare(
+    data.currentPassword,
+    user.passwordHash,
+  );
+  if (!passwordVerif) {
+    throw new AppError("Mot de passe actuel incorrect", 401);
+  }
+  const hashNewPassword = await bcrypt.hash(data.newPassword, 12);
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      passwordHash: hashNewPassword,
+    },
+  });
 }
