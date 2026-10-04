@@ -34,3 +34,14 @@ export async function meController(req: Request, res: Response) {
   const user = await getCurrentUser(req.user.userId);
   res.status(200).json({ user });
 }
+
+export function logoutController(req: Request, res: Response) {
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    })
+    .status(200)
+    .json({ message: "Déconnexion réussie" });
+}

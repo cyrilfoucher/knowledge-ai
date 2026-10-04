@@ -3,6 +3,7 @@ import {
   loginController,
   registerController,
   meController,
+  logoutController,
 } from "../controllers/authController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -11,4 +12,5 @@ const router = Router();
 router.post("/register", registerController);
 router.post("/login", loginController);
 router.get("/me", authMiddleware, meController);
+router.post("/logout", logoutController);
 export default router;
