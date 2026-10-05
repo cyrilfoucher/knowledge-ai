@@ -4,6 +4,8 @@ import {
   LoginSchema,
   UpdateProfileSchema,
   UpdatePasswordSchema,
+  ForgotPasswordSchema,
+  ResetPasswordSchema,
 } from "../schemas/authSchema.js";
 import {
   registerUser,
@@ -11,6 +13,8 @@ import {
   getCurrentUser,
   updateCurrentUser,
   updatePassword,
+  forgotPassword,
+  resetPassword,
 } from "../services/authService.js";
 import { signToken } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
@@ -71,4 +75,19 @@ export async function updatePasswordController(req: Request, res: Response) {
   const data = UpdatePasswordSchema.parse(req.body);
   await updatePassword(req.user.userId, data);
   return res.status(200).json({ message: "Mot de passe modifié avec succès" });
+}
+
+export async function forgotPasswordController(req: Request, res: Response) {
+  const data = ForgotPasswordSchema.parse(req.body);
+  await forgotPassword(data);
+  return res.status(200).json({
+    message:
+      "Si cet email est associé à un compte, un lien de réinitialisation a été envoyé",
+  });
+}
+
+export async function resetPasswordController(req: Request, res: Response) {
+  const data = ResetPasswordSchema.parse(req.body);
+  await resetPassword(data);
+  return res.status(200).json({ message: "Mot de passe réinitialisé" });
 }

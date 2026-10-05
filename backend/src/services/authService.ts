@@ -4,9 +4,14 @@ import type {
   LoginInput,
   UpdateProfileInput,
   UpdatePasswordInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
 } from "../schemas/authSchema.js";
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
+import { randomBytes, createHash } from "node:crypto";
+import { sendEmail } from "../utils/email.js";
+import { welcomeEmail, resetPasswordEmail } from "../utils/emailTemplates.js";
 
 export async function registerUser(data: RegisterInput) {
   const userExiste = await prisma.user.findUnique({
@@ -31,6 +36,15 @@ export async function registerUser(data: RegisterInput) {
       role: true,
     },
   });
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: "Bienvenue sur DevKnowledge",
+      html: welcomeEmail(user.name, process.env.CLIENT_URL ?? ""),
+    });
+  } catch (error) {
+    console.error("Échec de l'envoi de l'email de bienvenue :", error);
+  }
   return user;
 }
 
@@ -45,7 +59,12 @@ export async function loginUser(data: LoginInput) {
   if (!verifPassword) {
     throw new AppError("Email ou mot de passe incorrect", 401);
   }
-  const { passwordHash, ...userWithoutPassword } = user;
+  const {
+    passwordHash,
+    resetTokenHash,
+    resetTokenExpiresAt,
+    ...userWithoutPassword
+  } = user;
   return userWithoutPassword;
 }
 export async function getCurrentUser(userId: string) {
@@ -123,6 +142,59 @@ export async function updatePassword(
     where: { id: userId },
     data: {
       passwordHash: hashNewPassword,
+    },
+  });
+}
+
+export async function forgotPassword(data: ForgotPasswordInput) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
+  if (!user) {
+    return;
+  }
+  const token = randomBytes(32).toString("hex");
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      resetTokenHash: tokenHash,
+      resetTokenExpiresAt: new Date(Date.now() + 30 * 60 * 1000),
+    },
+  });
+  const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  await sendEmail({
+    to: user.email,
+    subject: "Réinitialisation de votre mot de passe",
+    html: resetPasswordEmail(resetLink),
+  });
+}
+
+export async function resetPassword(data: ResetPasswordInput) {
+  const tokenHash = createHash("sha256").update(data.token).digest("hex");
+  const user = await prisma.user.findUnique({
+    where: {
+      resetTokenHash: tokenHash,
+    },
+  });
+  if (
+    !user ||
+    !user.resetTokenExpiresAt ||
+    user.resetTokenExpiresAt < new Date()
+  ) {
+    throw new AppError("Ce lien est invalide ou a expiré", 400);
+  }
+  const passwordHash = await bcrypt.hash(data.newPassword, 12);
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      passwordHash: passwordHash,
+      resetTokenHash: null,
+      resetTokenExpiresAt: null,
     },
   });
 }

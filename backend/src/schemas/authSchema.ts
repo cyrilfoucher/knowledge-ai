@@ -37,3 +37,14 @@ export const UpdatePasswordSchema = z.object({
   newPassword: RegisterSchema.shape.password,
 });
 export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;
+
+export const ForgotPasswordSchema = z.object({
+  email: RegisterSchema.shape.email,
+});
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z.object({
+  token: z.string().min(1, "Le token est obligatoire"),
+  newPassword: RegisterSchema.shape.password,
+});
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
