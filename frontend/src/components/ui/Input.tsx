@@ -12,7 +12,7 @@ function Input({ label, error, id, className = "", ...props }: InputProps) {
       </label>
       <input
         id={id}
-        className={`w-full rounded-lg border bg-surface px-3 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary/25${error ? "border-danger" : "border-border"} ${className}`}
+        className={`w-full rounded-lg border bg-surface px-3 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary/25${error ? "border-danger" : "border-text"} ${className}`}
         {...props}
       />
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
