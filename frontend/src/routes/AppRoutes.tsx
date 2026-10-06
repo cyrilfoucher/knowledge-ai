@@ -6,14 +6,17 @@ import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
 import Knowledge from "../pages/Knowledge";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
+import GuestRoute from "../components/auth/GuestRoute";
 
 function AppRoutes() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/knowledge" element={<Knowledge />} />
         </Route>
