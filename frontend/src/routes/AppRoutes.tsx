@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound";
 import Knowledge from "../pages/Knowledge";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GuestRoute from "../components/auth/GuestRoute";
+import ForgotPassword from "../pages/ForgotPassword";
 
 function AppRoutes() {
   return (
@@ -16,6 +17,7 @@ function AppRoutes() {
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/knowledge" element={<Knowledge />} />

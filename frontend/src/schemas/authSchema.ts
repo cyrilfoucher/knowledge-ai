@@ -29,3 +29,8 @@ export const RegisterSchema = z
   });
 
 export type RegisterInput = z.infer<typeof RegisterSchema>;
+
+export const ForgotPasswordSchema = z.object({
+  email: RegisterSchema.shape.email,
+});
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;

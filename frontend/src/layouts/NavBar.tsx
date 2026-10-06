@@ -16,7 +16,7 @@ function NavBar() {
             DevKnowledge
           </NavLink>
           {isAuthenticated && (
-            <NavLink to="/" className="text-sm hover:text-primary hidden sm:block">
+            <NavLink to="/knowledge" className="text-sm hover:text-primary hidden sm:block">
               Mes connaissances
             </NavLink>
           )}
