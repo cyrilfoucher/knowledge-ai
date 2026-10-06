@@ -22,8 +22,8 @@ function Login() {
 
   const onSubmit = async (data: LoginInput) => {
     try {
-      await login(data.email, data.password);
-      navigate("/");
+      const user = await login(data.email, data.password);
+      navigate(user.role === "ADMIN" ? "/admin" : "/knowledge");
     } catch (error) {
       const message =
         isAxiosError(error) && error.response?.data?.message
