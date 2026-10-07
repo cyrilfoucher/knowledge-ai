@@ -34,3 +34,14 @@ export const ForgotPasswordSchema = z.object({
   email: RegisterSchema.shape.email,
 });
 export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z
+  .object({
+    newPassword: RegisterSchema.shape.password,
+    confirmPassword: z.string().min(1, "Confirme le mot de passe"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
+  });
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
