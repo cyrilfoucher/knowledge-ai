@@ -45,3 +45,21 @@ export const ResetPasswordSchema = z
     path: ["confirmPassword"],
   });
 export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
+
+export const UpdateProfileSchema = z.object({
+  email: RegisterSchema.shape.email,
+  name: RegisterSchema.shape.name,
+});
+export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
+
+export const UpdatePasswordSchema = z
+  .object({
+    currentPassword: LoginSchema.shape.password,
+    newPassword: RegisterSchema.shape.password,
+    confirmPassword: ResetPasswordSchema.shape.confirmPassword,
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
+  });
+export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;

@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<Utilisateur>;
   signUp: (name: string, email: string, password: string) => Promise<Utilisateur>;
   logout: () => Promise<void>;
+  updateProfile: (name: string, email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,6 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await api.post("/auth/logout");
     setUser(null);
   };
+  const updateProfile = async (name: string, email: string) => {
+    const response = await api.patch("/auth/me", { name, email });
+    setUser(response.data.user);
+  };
   useEffect(() => {
     const checkCookie = async () => {
       try {
@@ -47,7 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkCookie();
   }, []);
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, signUp, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, loading, login, signUp, logout, updateProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );

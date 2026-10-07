@@ -9,6 +9,7 @@ import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GuestRoute from "../components/auth/GuestRoute";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import MyAccount from "../pages/MyAccount";
 
 function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ function AppRoutes() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/knowledge" element={<Knowledge />} />
+          <Route path="/account" element={<MyAccount />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
