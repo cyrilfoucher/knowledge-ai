@@ -27,4 +27,22 @@ model User {
   updatedAt    DateTime @updatedAt
   resetTokenHash String? @unique
   resetTokenExpiresAt DateTime?
+  knowledges Knowledge[]
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
+model Knowledge {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  title String 
+  content String
+  visibility Visibility @default(PRIVATE)
+  authorId String
+  author User @relation (fields:[authorId],references:[id],onDelete:Cascade)
+  @@index([authorId])
 }
