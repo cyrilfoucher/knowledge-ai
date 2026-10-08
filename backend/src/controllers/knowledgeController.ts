@@ -1,10 +1,14 @@
 import type { Request, Response } from "express";
-import { CreateKnowledgeSchema } from "../schemas/knowledgeSchema.js";
+import {
+  CreateKnowledgeSchema,
+  UpdateKnowledgeSchema,
+} from "../schemas/knowledgeSchema.js";
 import AppError from "../errors/AppError.js";
 import {
   createKnowledge,
   getMyKnowledges,
   getKnowledgeById,
+  updateKnowledgeById,
 } from "../services/KnowledgeService.js";
 
 export async function createKnowledgeController(req: Request, res: Response) {
@@ -32,5 +36,17 @@ export async function getKnowledgeByIdController(
     throw new AppError("Aucun utilisateur trouvé", 401);
   }
   const knowledge = await getKnowledgeById(req.params.id, req.user);
+  return res.status(200).json({ knowledge });
+}
+
+export async function updateKnowledgeByIdController(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
+  if (!req.user) {
+    throw new AppError("Aucun utilisateur trouvé", 401);
+  }
+  const data = UpdateKnowledgeSchema.parse(req.body);
+  const knowledge = await updateKnowledgeById(req.params.id, req.user, data);
   return res.status(200).json({ knowledge });
 }

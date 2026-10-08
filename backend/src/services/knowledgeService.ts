@@ -1,5 +1,8 @@
 import { prisma } from "../lib/prisma.js";
-import type { CreateKnowledgeInput } from "../schemas/knowledgeSchema.js";
+import type {
+  CreateKnowledgeInput,
+  UpdateKnowledgeInput,
+} from "../schemas/knowledgeSchema.js";
 import { TokenPayload } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
 
@@ -41,4 +44,25 @@ export async function getKnowledgeById(id: string, user: TokenPayload) {
     throw new AppError("Connaissance introuvable", 404);
   }
   return knowledge;
+}
+
+export async function updateKnowledgeById(
+  id: string,
+  user: TokenPayload,
+  data: UpdateKnowledgeInput,
+) {
+  const findKnowledge = await getKnowledgeById(id, user);
+  const canEdit =
+    user.role === "ADMIN" || findKnowledge.authorId === user.userId;
+  if (!canEdit) {
+    throw new AppError(
+      "Vous n'avez pas le droit de modifier cette connaissance",
+      403,
+    );
+  }
+  const updateKnowledge = await prisma.knowledge.update({
+    where: { id: id },
+    data: data,
+  });
+  return updateKnowledge;
 }

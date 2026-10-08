@@ -13,3 +13,6 @@ export const CreateKnowledgeSchema = z.object({
   visibility: z.enum(["PRIVATE", "PUBLIC"]).optional(),
 });
 export type CreateKnowledgeInput = z.infer<typeof CreateKnowledgeSchema>;
+
+export const UpdateKnowledgeSchema = CreateKnowledgeSchema.partial();
+export type UpdateKnowledgeInput = z.infer<typeof UpdateKnowledgeSchema>;
