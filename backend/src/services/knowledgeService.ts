@@ -15,3 +15,11 @@ export async function createKnowledge(
   });
   return publication;
 }
+
+export async function getMyKnowledges(authorId: string) {
+  const authorKnowledges = await prisma.knowledge.findMany({
+    where: { authorId: authorId },
+    orderBy: { updatedAt: "desc" },
+  });
+  return authorKnowledges;
+}
