@@ -4,6 +4,7 @@ import AppError from "../errors/AppError.js";
 import {
   createKnowledge,
   getMyKnowledges,
+  getKnowledgeById,
 } from "../services/KnowledgeService.js";
 
 export async function createKnowledgeController(req: Request, res: Response) {
@@ -21,4 +22,15 @@ export async function getMyKnowledgesController(req: Request, res: Response) {
   }
   const knowledges = await getMyKnowledges(req.user.userId);
   return res.status(200).json({ knowledges });
+}
+
+export async function getKnowledgeByIdController(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
+  if (!req.user) {
+    throw new AppError("Aucun utilisateur trouvé", 401);
+  }
+  const knowledge = await getKnowledgeById(req.params.id, req.user);
+  return res.status(200).json({ knowledge });
 }
