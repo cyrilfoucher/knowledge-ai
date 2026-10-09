@@ -5,6 +5,7 @@ import type { Knowledge } from "../types/knowledge";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
 import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
@@ -60,6 +61,12 @@ function KnowledgePage() {
   return (
     <>
       <PageHeader title="Mes connaissances" />
+      <Link
+        to="/knowledge/new"
+        className="mb-6 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-on-primary hover:bg-primary-hover"
+      >
+        <Plus size={16} /> Nouvelle fiche
+      </Link>
       {renderContent()}
     </>
   );

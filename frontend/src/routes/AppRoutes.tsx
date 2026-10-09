@@ -11,6 +11,7 @@ import GuestRoute from "../components/auth/GuestRoute";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
 import MyAccount from "../pages/MyAccount";
+import KnowledgeCreatePage from "../pages/KnowledgeCreatePage";
 
 function AppRoutes() {
   return (
@@ -26,6 +27,7 @@ function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route path="/knowledge" element={<KnowledgePage />} />
           <Route path="/knowledge/:id" element={<KnowledgeDetailPage />} />
+          <Route path="/knowledge/new" element={<KnowledgeCreatePage />} />
           <Route path="/account" element={<MyAccount />} />
         </Route>
       </Route>
