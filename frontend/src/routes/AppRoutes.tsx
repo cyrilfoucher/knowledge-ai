@@ -5,6 +5,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
 import KnowledgePage from "../pages/KnowledgePage";
+import KnowledgeDetailPage from "../pages/KnowledgeDetailPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GuestRoute from "../components/auth/GuestRoute";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -24,6 +25,7 @@ function AppRoutes() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/knowledge" element={<KnowledgePage />} />
+          <Route path="/knowledge/:id" element={<KnowledgeDetailPage />} />
           <Route path="/account" element={<MyAccount />} />
         </Route>
       </Route>
