@@ -4,7 +4,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
-import Knowledge from "../pages/Knowledge";
+import KnowledgePage from "../pages/KnowledgePage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GuestRoute from "../components/auth/GuestRoute";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -23,7 +23,7 @@ function AppRoutes() {
           <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          <Route path="/knowledge" element={<Knowledge />} />
+          <Route path="/knowledge" element={<KnowledgePage />} />
           <Route path="/account" element={<MyAccount />} />
         </Route>
       </Route>

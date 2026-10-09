@@ -45,7 +45,10 @@ function NavBar() {
                   <NavLink to="/account" className="block px-4 py-2 text-sm hover:bg-bg">
                     Mon compte
                   </NavLink>
-                  <NavLink to="/" className="block px-4 py-2 text-sm hover:bg-bg sm:hidden">
+                  <NavLink
+                    to="/knowledge"
+                    className="block px-4 py-2 text-sm hover:bg-bg sm:hidden"
+                  >
                     Mes connaissances
                   </NavLink>
 
