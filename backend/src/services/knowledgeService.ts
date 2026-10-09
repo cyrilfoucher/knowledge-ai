@@ -3,7 +3,7 @@ import type {
   CreateKnowledgeInput,
   UpdateKnowledgeInput,
 } from "../schemas/knowledgeSchema.js";
-import { TokenPayload } from "../utils/jwt.js";
+import type { TokenPayload } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
 
 export async function createKnowledge(
@@ -46,14 +46,17 @@ export async function getKnowledgeById(id: string, user: TokenPayload) {
   return knowledge;
 }
 
+function canManageKnowledge(authorId: string, user: TokenPayload) {
+  return user.role === "ADMIN" || authorId === user.userId;
+}
+
 export async function updateKnowledgeById(
   id: string,
   user: TokenPayload,
   data: UpdateKnowledgeInput,
 ) {
-  const findKnowledge = await getKnowledgeById(id, user);
-  const canEdit =
-    user.role === "ADMIN" || findKnowledge.authorId === user.userId;
+  const knowledge = await getKnowledgeById(id, user);
+  const canEdit = canManageKnowledge(knowledge.authorId, user);
   if (!canEdit) {
     throw new AppError(
       "Vous n'avez pas le droit de modifier cette connaissance",
@@ -65,4 +68,18 @@ export async function updateKnowledgeById(
     data: data,
   });
   return updateKnowledge;
+}
+
+export async function deleteKnowledgeById(id: string, user: TokenPayload) {
+  const knowledge = await getKnowledgeById(id, user);
+  const canDelete = canManageKnowledge(knowledge.authorId, user);
+  if (!canDelete) {
+    throw new AppError(
+      "Vous n'avez pas le droit de supprimer cette connaissance",
+      403,
+    );
+  }
+  await prisma.knowledge.delete({
+    where: { id: id },
+  });
 }

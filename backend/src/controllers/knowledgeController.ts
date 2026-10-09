@@ -9,6 +9,7 @@ import {
   getMyKnowledges,
   getKnowledgeById,
   updateKnowledgeById,
+  deleteKnowledgeById,
 } from "../services/KnowledgeService.js";
 
 export async function createKnowledgeController(req: Request, res: Response) {
@@ -49,4 +50,15 @@ export async function updateKnowledgeByIdController(
   const data = UpdateKnowledgeSchema.parse(req.body);
   const knowledge = await updateKnowledgeById(req.params.id, req.user, data);
   return res.status(200).json({ knowledge });
+}
+
+export async function deleteKnowledgeByIdController(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
+  if (!req.user) {
+    throw new AppError("Aucun utilisateur trouvé", 401);
+  }
+  await deleteKnowledgeById(req.params.id, req.user);
+  return res.status(204).send();
 }
