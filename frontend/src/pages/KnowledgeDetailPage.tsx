@@ -1,17 +1,21 @@
 import PageHeader from "../layouts/PageHeader";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
 import type { Knowledge } from "../types/knowledge";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
   const [knowledge, setKnowledge] = useState<Knowledge | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const navigate = useNavigate();
   useEffect(() => {
     async function callKnowledge() {
       try {
@@ -25,6 +29,22 @@ function KnowledgeDetailPage() {
     }
     callKnowledge();
   }, [id]);
+  async function handleDelete() {
+    const confirmed = window.confirm(
+      "Supprimer définitivement cette fiche ? Cette action est irréversible."
+    );
+    if (!confirmed) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      await api.delete(`/knowledges/${id}`);
+      navigate("/knowledge");
+    } catch {
+      setDeleteError("Impossible de supprimer la fiche.");
+      setDeleting(false);
+    }
+  }
   function renderContent() {
     if (loading) {
       return <p className="text-muted">Chargement en cours...</p>;
@@ -39,6 +59,21 @@ function KnowledgeDetailPage() {
       <Card>
         <h2 className="text-xl font-semibold">{knowledge.title}</h2>
         <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
+        {deleteError && (
+          <Alert variant="danger" className="mt-4">
+            {deleteError}
+          </Alert>
+        )}
+        <div className="mt-6 flex justify-end">
+          <Button
+            disabled={deleting}
+            onClick={handleDelete}
+            variant="danger"
+            className="inline-flex items-center gap-2"
+          >
+            <Trash2 size={16} /> {deleting ? "Suppression..." : "Supprimer"}
+          </Button>
+        </div>
       </Card>
     );
   }
