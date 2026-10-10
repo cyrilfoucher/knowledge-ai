@@ -7,6 +7,7 @@ import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import type { Knowledge } from "../types/knowledge";
 import { ArrowLeft, Trash2, Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
@@ -39,6 +40,7 @@ function KnowledgeDetailPage() {
     setDeleting(true);
     try {
       await api.delete(`/knowledges/${id}`);
+      toast.success("Fiche supprimée");
       navigate("/knowledge");
     } catch {
       setDeleteError("Impossible de supprimer la fiche.");

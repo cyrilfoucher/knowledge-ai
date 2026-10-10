@@ -5,11 +5,13 @@ import type { KnowledgeFormData } from "../schemas/knowledgeSchema";
 import Card from "../components/ui/Card";
 import api from "../api/axios";
 import KnowledgeForm from "../components/knowledge/KnowledgeForm";
+import { toast } from "sonner";
 
 function CreateKnowledge() {
   const navigate = useNavigate();
   async function handleCreate(data: KnowledgeFormData) {
     await api.post("/knowledges", data);
+    toast.success("Fiche créée");
     navigate("/knowledge");
   }
   return (

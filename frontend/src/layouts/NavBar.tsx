@@ -1,13 +1,16 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useState } from "react";
-import { useTheme } from "../hooks/useTheme";
 import { Moon, Sun } from "lucide-react";
+import { useState } from "react";
 
-function NavBar() {
+interface NavbarProps {
+  theme: "dark" | "light";
+  onToggleTheme: () => void;
+}
+
+function Navbar({ theme, onToggleTheme }: NavbarProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { theme, ChangeTheme } = useTheme();
   return (
     <header className="border-b border-border">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
@@ -24,7 +27,7 @@ function NavBar() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <button
-            onClick={ChangeTheme}
+            onClick={onToggleTheme}
             aria-label={theme === "dark" ? "Passer au thème clair" : "Passer au thème sombre"}
             className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-muted hover:bg-surface hover:text-text"
           >
@@ -80,4 +83,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default Navbar;
