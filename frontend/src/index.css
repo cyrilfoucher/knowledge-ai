@@ -4,7 +4,7 @@
   --bg: #f3f7eb;
   --surface: #fbfdf7;
   --border: #dfe8cf;
-  --text: #3f6212;
+  --text: #0f766e;
   --muted: #6b7360;
   --primary: #0d9488;
   --primary-hover: #0f766e;
@@ -12,6 +12,7 @@
   --link: #0d9488;
   --danger: #dc2626;
   --on-danger: #ffffff;
+  --heading: var(--primary);
 }
 
 [data-theme="dark"] {
@@ -19,13 +20,13 @@
   --surface: #111a2e;
   --border: #1e293b;
   --text: #b5e08a;
-  --muted: #94a3b8;
   --primary: #14b8a6;
   --primary-hover: #2dd4bf;
   --on-primary: #042f2e;
   --link: #2dd4bf;
   --danger: #f87171;
   --on-danger: #450a0a;
+  --heading: var(--primary);
 }
 
 @theme inline {
@@ -41,6 +42,7 @@
   --color-link: var(--link);
   --color-danger: var(--danger);
   --color-on-danger: var(--on-danger);
+  --color-heading: var(--heading);
 }
 
 @layer base {

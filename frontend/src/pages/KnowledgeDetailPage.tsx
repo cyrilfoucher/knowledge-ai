@@ -6,7 +6,7 @@ import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import type { Knowledge } from "../types/knowledge";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Pencil } from "lucide-react";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
@@ -64,7 +64,13 @@ function KnowledgeDetailPage() {
             {deleteError}
           </Alert>
         )}
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-end gap-3">
+          <Link
+            to={`/knowledge/${id}/edit`}
+            className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface"
+          >
+            <Pencil size={16} /> Modifier
+          </Link>
           <Button
             disabled={deleting}
             onClick={handleDelete}

@@ -12,7 +12,7 @@ function NavBar() {
     <header className="border-b border-border">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
-          <NavLink to="/" className="text-lg font-semibold">
+          <NavLink to="/" className="text-lg font-semibold text-heading">
             DevKnowledge
           </NavLink>
           {isAuthenticated && (

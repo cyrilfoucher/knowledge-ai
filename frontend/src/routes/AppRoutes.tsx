@@ -12,6 +12,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
 import MyAccount from "../pages/MyAccount";
 import KnowledgeCreatePage from "../pages/KnowledgeCreatePage";
+import KnowledgeEdit from "../pages/KnowledgeEditPage";
 
 function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ function AppRoutes() {
           <Route path="/knowledge/:id" element={<KnowledgeDetailPage />} />
           <Route path="/knowledge/new" element={<KnowledgeCreatePage />} />
           <Route path="/account" element={<MyAccount />} />
+          <Route path="/knowledge/:id/edit" element={<KnowledgeEdit />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />
