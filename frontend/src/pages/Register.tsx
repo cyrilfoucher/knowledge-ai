@@ -69,7 +69,7 @@ function Register() {
           {...register("confirmPassword")}
         />
 
-        {errors.root && <Alert>{errors.root.message}</Alert>}
+        {errors.root && <Alert variant="danger">{errors.root.message}</Alert>}
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
           Créer mon compte
