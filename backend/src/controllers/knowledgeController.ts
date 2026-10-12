@@ -10,7 +10,8 @@ import {
   getKnowledgeById,
   updateKnowledgeById,
   deleteKnowledgeById,
-} from "../services/KnowledgeService.js";
+} from "../services/knowledgeService.js";
+import { PaginationQuerySchema } from "../schemas/paginationSchema.js";
 
 export async function createKnowledgeController(req: Request, res: Response) {
   if (!req.user) {
@@ -25,8 +26,14 @@ export async function getMyKnowledgesController(req: Request, res: Response) {
   if (!req.user) {
     throw new AppError("Aucun utilisateur trouvé", 401);
   }
-  const knowledges = await getMyKnowledges(req.user.userId);
-  return res.status(200).json({ knowledges });
+  const { page, limit } = PaginationQuerySchema.parse(req.query);
+  const { knowledges, total } = await getMyKnowledges(
+    req.user.userId,
+    page,
+    limit,
+  );
+  const totalPages = Math.ceil(total / limit);
+  return res.status(200).json({ knowledges, total, totalPages, limit, page });
 }
 
 export async function getKnowledgeByIdController(

@@ -21,12 +21,27 @@ export async function createKnowledge(
   return publication;
 }
 
-export async function getMyKnowledges(authorId: string) {
-  const authorKnowledges = await prisma.knowledge.findMany({
-    where: { authorId: authorId },
-    orderBy: { updatedAt: "desc" },
-  });
-  return authorKnowledges;
+export async function getMyKnowledges(
+  authorId: string,
+  page: number,
+  limit: number,
+) {
+  const [knowledges, total] = await Promise.all([
+    prisma.knowledge.findMany({
+      where: {
+        authorId,
+      },
+      orderBy: { updatedAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.knowledge.count({
+      where: {
+        authorId,
+      },
+    }),
+  ]);
+  return { knowledges, total };
 }
 
 export async function getKnowledgeById(id: string, user: TokenPayload) {

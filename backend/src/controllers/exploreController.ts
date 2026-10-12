@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { ExploreQuerySchema } from "../schemas/exploreSchema.js";
+import { PaginationQuerySchema } from "../schemas/paginationSchema.js";
 import {
   getPublicKnowledges,
   getPublicKnowledgeById,
@@ -9,7 +9,7 @@ export async function getPublicKnowledgesController(
   req: Request,
   res: Response,
 ) {
-  const { page, limit } = ExploreQuerySchema.parse(req.query);
+  const { page, limit } = PaginationQuerySchema.parse(req.query);
   const { knowledges, total } = await getPublicKnowledges(page, limit);
   const totalPages = Math.ceil(total / limit);
   return res.json({ page, limit, totalPages, knowledges, total });
