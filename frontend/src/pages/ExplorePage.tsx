@@ -17,6 +17,7 @@ function ExplorePage() {
     window.scrollTo(0, 0);
     async function loadingKnowledge() {
       try {
+        setError(null);
         const response = await api.get<ExploreResponse>("/explore", { params: { page, limit } });
         setData(response.data);
       } catch {
@@ -41,9 +42,10 @@ function ExplorePage() {
       <>
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-muted">
-            <span className="font-semibold text-heading">{data.total}</span> fiches de connaissances
+            <span className="font-semibold text-heading">{data.total}</span>{" "}
+            {data.total > 1 ? "fiches" : "fiche"}
           </p>
-          <label className="text-sm text-muted">
+          <label className="text-sm text-muted whitespace-nowrap">
             Afficher{" "}
             <select
               value={limit}
@@ -81,17 +83,23 @@ function ExplorePage() {
           ))}
         </ul>
         {data.totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-between">
-            <Button variant="secondary" onClick={() => setPage(page - 1)} disabled={page === 1}>
+          <div className="mt-6 grid grid-cols-3 items-center">
+            <Button
+              variant="secondary"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+              className="justify-self-start"
+            >
               Précédent
             </Button>
-            <span className="font-semibold text-heading">
+            <span className="font-semibold text-heading text-center">
               Page {page} sur {data.totalPages}
             </span>
             <Button
               variant="secondary"
               onClick={() => setPage(page + 1)}
               disabled={page >= data.totalPages}
+              className="justify-self-end"
             >
               Suivant
             </Button>
