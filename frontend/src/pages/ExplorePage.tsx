@@ -12,10 +12,12 @@ function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   useEffect(() => {
+    window.scrollTo(0, 0);
     async function loadingKnowledge() {
       try {
-        const response = await api.get<ExploreResponse>("/explore", { params: { page } });
+        const response = await api.get<ExploreResponse>("/explore", { params: { page, limit } });
         setData(response.data);
       } catch {
         setError("Impossible de charger les données");
@@ -24,7 +26,7 @@ function ExplorePage() {
       }
     }
     loadingKnowledge();
-  }, [page]);
+  }, [page, limit]);
   function renderContent() {
     if (loading) {
       return <p className="text-muted">Chargement...</p>;
@@ -33,10 +35,33 @@ function ExplorePage() {
       return <Alert variant="danger">{error}</Alert>;
     }
     if (!data || data.knowledges.length === 0) {
-      return <p>Aucune fiche publique pour le moment</p>;
+      return <p className="text-muted">Aucune fiche publique pour le moment</p>;
     }
     return (
       <>
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm text-muted">
+            <span className="font-semibold text-heading">{data.total}</span> fiches de connaissances
+          </p>
+          <label className="text-sm text-muted">
+            Afficher{" "}
+            <select
+              value={limit}
+              onChange={(e) => {
+                setLimit(Number(e.target.value));
+                setPage(1);
+              }}
+              className="rounded-lg border border-border bg-surface px-2 py-1 focus:outline-none focus:border-primary text-heading"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={50}>50</option>
+            </select>{" "}
+            par page
+          </label>
+        </div>
         <ul className="space-y-4">
           {data.knowledges.map((knowledge) => (
             <li key={knowledge.id}>
@@ -55,6 +80,23 @@ function ExplorePage() {
             </li>
           ))}
         </ul>
+        {data.totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-between">
+            <Button variant="secondary" onClick={() => setPage(page - 1)} disabled={page === 1}>
+              Précédent
+            </Button>
+            <span className="font-semibold text-heading">
+              Page {page} sur {data.totalPages}
+            </span>
+            <Button
+              variant="secondary"
+              onClick={() => setPage(page + 1)}
+              disabled={page >= data.totalPages}
+            >
+              Suivant
+            </Button>
+          </div>
+        )}
       </>
     );
   }
