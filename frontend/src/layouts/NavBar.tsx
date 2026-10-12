@@ -23,6 +23,9 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
               Mes connaissances
             </NavLink>
           )}
+          <NavLink to="/explore" className="text-sm hover:text-primary hidden sm:block">
+            Découvrir
+          </NavLink>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">

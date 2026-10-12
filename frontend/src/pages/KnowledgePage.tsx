@@ -41,7 +41,7 @@ function KnowledgePage() {
             <Link to={`/knowledge/${knowledge.id}`} className="block hover:opacity-80">
               <Card>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">{knowledge.title}</h2>
+                  <h2 className="text-lg font-semibold text-heading">{knowledge.title}</h2>
                   <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
                     {knowledge.visibility === "PUBLIC" ? "Publique" : "Privée"}
                   </span>

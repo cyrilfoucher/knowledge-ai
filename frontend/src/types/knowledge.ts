@@ -9,3 +9,13 @@ export interface Knowledge {
   createdAt: string;
   updatedAt: string;
 }
+
+export type PublicKnowledge = Knowledge & { author: { name: string } };
+
+export type ExploreResponse = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  knowledges: PublicKnowledge[];
+};

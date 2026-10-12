@@ -13,12 +13,16 @@ import ResetPassword from "../pages/ResetPassword";
 import MyAccount from "../pages/MyAccount";
 import KnowledgeCreatePage from "../pages/KnowledgeCreatePage";
 import KnowledgeEdit from "../pages/KnowledgeEditPage";
+import ExplorePage from "../pages/ExplorePage";
+import ExploreDetailPage from "../pages/ExploreDetailPage";
 
 function AppRoutes() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/explore/:id" element={<ExploreDetailPage />} />
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

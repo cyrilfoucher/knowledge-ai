@@ -59,7 +59,7 @@ function KnowledgeDetailPage() {
     }
     return (
       <Card>
-        <h2 className="text-xl font-semibold">{knowledge.title}</h2>
+        <h2 className="text-xl font-semibold text-heading">{knowledge.title}</h2>
         <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
         {deleteError && (
           <Alert variant="danger" className="mt-4">
@@ -69,7 +69,7 @@ function KnowledgeDetailPage() {
         <div className="mt-6 flex justify-end gap-3">
           <Link
             to={`/knowledge/${id}/edit`}
-            className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface"
+            className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface text-heading"
           >
             <Pencil size={16} /> Modifier
           </Link>
