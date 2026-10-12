@@ -4,8 +4,9 @@ import api from "../api/axios";
 import type { ExploreResponse } from "../types/knowledge";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
 import { Link } from "react-router-dom";
+import Pagination from "../components/ui/Pagination";
+import PageSizeSelect from "../components/ui/PageSizeSelect";
 
 function ExplorePage() {
   const [data, setData] = useState<ExploreResponse | null>(null);
@@ -45,24 +46,13 @@ function ExplorePage() {
             <span className="font-semibold text-heading">{data.total}</span>{" "}
             {data.total > 1 ? "fiches" : "fiche"}
           </p>
-          <label className="text-sm text-muted whitespace-nowrap">
-            Afficher{" "}
-            <select
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(1);
-              }}
-              className="rounded-lg border border-border bg-surface px-2 py-1 focus:outline-none focus:border-primary text-heading"
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-              <option value={50}>50</option>
-            </select>{" "}
-            par page
-          </label>
+          <PageSizeSelect
+            value={limit}
+            onChange={(value) => {
+              setLimit(value);
+              setPage(1);
+            }}
+          />
         </div>
         <ul className="space-y-4">
           {data.knowledges.map((knowledge) => (
@@ -82,29 +72,7 @@ function ExplorePage() {
             </li>
           ))}
         </ul>
-        {data.totalPages > 1 && (
-          <div className="mt-6 grid grid-cols-3 items-center">
-            <Button
-              variant="secondary"
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-              className="justify-self-start"
-            >
-              Précédent
-            </Button>
-            <span className="font-semibold text-heading text-center">
-              Page {page} sur {data.totalPages}
-            </span>
-            <Button
-              variant="secondary"
-              onClick={() => setPage(page + 1)}
-              disabled={page >= data.totalPages}
-              className="justify-self-end"
-            >
-              Suivant
-            </Button>
-          </div>
-        )}
+        <Pagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
       </>
     );
   }

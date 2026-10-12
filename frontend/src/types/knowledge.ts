@@ -19,3 +19,11 @@ export type ExploreResponse = {
   totalPages: number;
   knowledges: PublicKnowledge[];
 };
+
+export type MyKnowledgesResponse = {
+  knowledges: Knowledge[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
