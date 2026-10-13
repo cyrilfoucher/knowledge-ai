@@ -58,3 +58,32 @@ export async function deleteKnowledgeByAdmin(id: string, reason: string) {
     console.error("Échec de l'envoi de l'email de suppression", error);
   });
 }
+
+export async function getAdminStats() {
+  const [users, knowledges, publicKnowledges] = await Promise.all([
+    prisma.user.count(),
+    prisma.knowledge.count(),
+    prisma.knowledge.count({ where: { visibility: "PUBLIC" } }),
+  ]);
+  return { users, knowledges, publicKnowledges };
+}
+
+export async function getUsers(page: number, limit: number) {
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        _count: { select: { knowledges: true } },
+      },
+    }),
+    prisma.user.count(),
+  ]);
+  return { users, total };
+}

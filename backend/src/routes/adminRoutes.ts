@@ -3,6 +3,8 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 import adminMiddleware from "../middlewares/adminMiddleware.js";
 import {
   deleteKnowledgeByAdminController,
+  getAdminStatsController,
+  getUsersController,
   unpublishKnowledgeController,
 } from "../controllers/adminController.js";
 
@@ -11,5 +13,7 @@ const router = Router();
 router.use(authMiddleware, adminMiddleware);
 router.patch("/knowledges/:id/unpublish", unpublishKnowledgeController);
 router.delete("/knowledges/:id", deleteKnowledgeByAdminController);
+router.get("/stats", getAdminStatsController);
+router.get("/users", getUsersController);
 
 export default router;
