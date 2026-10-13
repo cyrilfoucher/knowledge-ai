@@ -22,5 +22,5 @@ export async function deleteKnowledgeByAdminController(
   const data = ModerationSchema.parse(req.body);
   const { reason } = data;
   await deleteKnowledgeByAdmin(req.params.id, reason);
-  return res.status(204);
+  return res.status(204).send();
 }
