@@ -25,6 +25,7 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
       subject,
       htmlContent: html,
     }),
+    signal: AbortSignal.timeout(10000),
   });
 
   if (!response.ok) {

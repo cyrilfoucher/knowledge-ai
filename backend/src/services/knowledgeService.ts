@@ -52,9 +52,7 @@ export async function getKnowledgeById(id: string, user: TokenPayload) {
     throw new AppError("Connaissance introuvable", 404);
   }
   const canRead =
-    knowledge.visibility === "PUBLIC" ||
-    knowledge.authorId === user.userId ||
-    user.role === "ADMIN";
+    knowledge.visibility === "PUBLIC" || knowledge.authorId === user.userId;
   if (!canRead) {
     throw new AppError("Connaissance introuvable", 404);
   }
@@ -62,7 +60,7 @@ export async function getKnowledgeById(id: string, user: TokenPayload) {
 }
 
 function canManageKnowledge(authorId: string, user: TokenPayload) {
-  return user.role === "ADMIN" || authorId === user.userId;
+  return authorId === user.userId;
 }
 
 export async function updateKnowledgeById(
