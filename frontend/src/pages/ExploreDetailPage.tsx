@@ -1,17 +1,29 @@
 import PageHeader from "../layouts/PageHeader";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
 import type { PublicKnowledge } from "../types/knowledge";
-import { ArrowLeft } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import Button from "../components/ui/Button";
+import { ArrowLeft, EyeOff, Trash2 } from "lucide-react";
+import Textarea from "../components/ui/Textarea";
+import { toast } from "sonner";
+import { isAxiosError } from "axios";
 
 function ExploreKnowledgeDetailPage() {
   const { id } = useParams();
   const [knowledge, setKnowledge] = useState<PublicKnowledge | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
+  const [action, setAction] = useState<"unpublish" | "delete" | null>(null);
+  const [reason, setReason] = useState("");
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
+  const [moderationError, setModerationError] = useState<string | null>(null);
   useEffect(() => {
     async function callKnowledge() {
       try {
@@ -25,6 +37,31 @@ function ExploreKnowledgeDetailPage() {
     }
     callKnowledge();
   }, [id]);
+  async function handleModeration() {
+    if (reason.trim().length < 10) {
+      setModerationError("Le motif doit contenir au moins 10 caractères.");
+      return;
+    }
+    setSubmitting(true);
+    setModerationError(null);
+    try {
+      if (action === "unpublish") {
+        await api.patch(`/admin/knowledges/${id}/unpublish`, { reason });
+        toast.success("Fiche dépubliée");
+      } else {
+        await api.delete(`/admin/knowledges/${id}`, { data: { reason } });
+        toast.success("Fiche supprimée");
+      }
+      navigate("/explore");
+    } catch (error) {
+      const message =
+        isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : "L'action a échoué. Réessaie plus tard.";
+      setModerationError(message);
+      setSubmitting(false);
+    }
+  }
 
   function renderContent() {
     if (loading) {
@@ -44,6 +81,54 @@ function ExploreKnowledgeDetailPage() {
           {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
         </p>
         <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
+        {isAdmin && (
+          <div className="mt-6 flex justify-end gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => setAction("unpublish")}
+              className="inline-flex items-center gap-2"
+            >
+              <EyeOff size={16} /> Dépublier
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => setAction("delete")}
+              className="inline-flex items-center gap-2"
+            >
+              <Trash2 size={16} /> Supprimer
+            </Button>
+          </div>
+        )}
+        {action && (
+          <div className="mt-4 space-y-3">
+            <Textarea
+              id="reason"
+              label={
+                action === "unpublish" ? "Motif de la dépublication" : "Motif de la suppression"
+              }
+              rows={3}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Ce motif sera envoyé à l'auteur par email."
+            />
+            {moderationError && <Alert variant="danger">{moderationError}</Alert>}
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setAction(null);
+                  setReason("");
+                  setModerationError(null);
+                }}
+              >
+                Annuler
+              </Button>
+              <Button variant="danger" onClick={handleModeration} disabled={submitting}>
+                {submitting ? "Envoi…" : "Confirmer"}
+              </Button>
+            </div>
+          </div>
+        )}
       </Card>
     );
   }
