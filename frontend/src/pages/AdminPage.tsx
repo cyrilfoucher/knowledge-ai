@@ -4,6 +4,7 @@ import api from "../api/axios";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
 import type { AdminStats } from "../types/admin";
+import UserList from "../components/admin/UserList";
 
 function AdminPage() {
   const [loading, setLoading] = useState(true);
@@ -56,6 +57,9 @@ function AdminPage() {
     <>
       <PageHeader title="Administration" subtitle="Informations de la plateforme" />
       {renderContent()}
+
+      <h2 className="mt-10 mb-4 text-xl font-semibold text-heading">Utilisateurs</h2>
+      <UserList />
     </>
   );
 }
