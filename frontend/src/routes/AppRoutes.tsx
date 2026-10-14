@@ -15,6 +15,8 @@ import KnowledgeCreatePage from "../pages/KnowledgeCreatePage";
 import KnowledgeEdit from "../pages/KnowledgeEditPage";
 import ExplorePage from "../pages/ExplorePage";
 import ExploreDetailPage from "../pages/ExploreDetailPage";
+import AdminRoute from "../components/auth/AdminRoute";
+import AdminPage from "../pages/AdminPage";
 
 function AppRoutes() {
   return (
@@ -35,6 +37,10 @@ function AppRoutes() {
           <Route path="/knowledge/new" element={<KnowledgeCreatePage />} />
           <Route path="/account" element={<MyAccount />} />
           <Route path="/knowledge/:id/edit" element={<KnowledgeEdit />} />
+        </Route>
+        <Route>
+          <Route element={<AppRoutes />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

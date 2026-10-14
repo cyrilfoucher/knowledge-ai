@@ -10,6 +10,7 @@ interface NavbarProps {
 
 function Navbar({ theme, onToggleTheme }: NavbarProps) {
   const { user, isAuthenticated, logout } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -45,6 +46,7 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
   }, [menuOpen]);
 
   const themeLabel = theme === "dark" ? "Passer au thème clair" : "Passer au thème sombre";
+  const desktopLink = "hidden text-sm hover:text-primary sm:block";
   const mobileLink = "block rounded-md px-3 py-2 text-sm hover:bg-surface";
 
   return (
@@ -55,13 +57,18 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
             DevKnowledge
           </NavLink>
           {isAuthenticated && (
-            <NavLink to="/knowledge" className="hidden text-sm hover:text-primary sm:block">
+            <NavLink to="/knowledge" className={desktopLink}>
               Mes connaissances
             </NavLink>
           )}
-          <NavLink to="/explore" className="hidden text-sm hover:text-primary sm:block">
+          <NavLink to="/explore" className={desktopLink}>
             Découvrir
           </NavLink>
+          {isAdmin && (
+            <NavLink to="/admin" className={desktopLink}>
+              Administration
+            </NavLink>
+          )}
         </div>
 
         <div className="hidden items-center gap-3 sm:flex">
@@ -141,6 +148,11 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
               <NavLink to="/knowledge" onClick={closeMenus} className={mobileLink}>
                 Mes connaissances
               </NavLink>
+              {isAdmin && (
+                <NavLink to="/admin" onClick={closeMenus} className={mobileLink}>
+                  Administration
+                </NavLink>
+              )}
               <NavLink to="/account" onClick={closeMenus} className={mobileLink}>
                 Mon compte
               </NavLink>
