@@ -15,6 +15,12 @@ services:
 
   backend:
     build: ./backend
+    command:
+      [
+        "sh",
+        "-c",
+        "npx prisma migrate deploy && node dist/seed.js && exec node dist/server.js",
+      ]
     environment:
       PORT: 5001
       DATABASE_URL: postgresql://devknowledge:devknowledge@db:5432/devknowledge
