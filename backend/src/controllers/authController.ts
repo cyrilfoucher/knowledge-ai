@@ -19,6 +19,14 @@ import {
 import { signToken } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+} as const;
+
 export async function registerController(req: Request, res: Response) {
   const data = RegisterSchema.parse(req.body);
   const user = await registerUser(data);
@@ -30,9 +38,7 @@ export async function loginController(req: Request, res: Response) {
   const user = await loginUser(data);
   const token = signToken({ userId: user.id, role: user.role });
   res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({ user });
@@ -48,11 +54,7 @@ export async function meController(req: Request, res: Response) {
 
 export function logoutController(req: Request, res: Response) {
   res
-    .clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    })
+    .clearCookie("token", cookieOptions)
     .status(200)
     .json({ message: "Déconnexion réussie" });
 }
