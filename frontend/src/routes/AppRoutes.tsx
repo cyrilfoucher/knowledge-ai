@@ -17,6 +17,7 @@ import ExplorePage from "../pages/ExplorePage";
 import ExploreDetailPage from "../pages/ExploreDetailPage";
 import AdminRoute from "../components/auth/AdminRoute";
 import AdminPage from "../pages/AdminPage";
+import AboutPage from "../pages/AboutPage";
 
 function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/explore/:id" element={<ExploreDetailPage />} />
+        <Route path="/a-propos" element={<AboutPage />} />
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -38,8 +40,7 @@ function AppRoutes() {
           <Route path="/account" element={<MyAccount />} />
           <Route path="/knowledge/:id/edit" element={<KnowledgeEdit />} />
         </Route>
-        <Route>
-          <Route element={<AppRoutes />} />
+        <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminPage />} />
         </Route>
       </Route>
