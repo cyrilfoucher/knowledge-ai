@@ -28,6 +28,7 @@ services:
       CLIENT_URL: http://localhost:8080
       EMAIL_FROM: demo@devknowledge.local
       BREVO_API_KEY: ""
+      DEMO_EMAIL: demo@example.com
     ports:
       - "5001:5001"
     depends_on:

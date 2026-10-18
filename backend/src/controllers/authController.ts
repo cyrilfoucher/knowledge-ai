@@ -15,6 +15,7 @@ import {
   updatePassword,
   forgotPassword,
   resetPassword,
+  loginDemoUser,
 } from "../services/authService.js";
 import { signToken } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
@@ -36,6 +37,16 @@ export async function registerController(req: Request, res: Response) {
 export async function loginController(req: Request, res: Response) {
   const data = LoginSchema.parse(req.body);
   const user = await loginUser(data);
+  const token = signToken({ userId: user.id, role: user.role });
+  res.cookie("token", token, {
+    ...cookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.status(200).json({ user });
+}
+
+export async function demoLoginController(req: Request, res: Response) {
+  const user = await loginDemoUser();
   const token = signToken({ userId: user.id, role: user.role });
   res.cookie("token", token, {
     ...cookieOptions,

@@ -86,16 +86,33 @@ export async function getCurrentUser(userId: string) {
   return user;
 }
 
+function isDemoEmail(email: string) {
+  return email === process.env.DEMO_EMAIL;
+}
 export async function updateCurrentUser(
   userId: string,
   data: UpdateProfileInput,
 ) {
-  if (data.email) {
+  const currentUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true },
+  });
+  if (!currentUser) {
+    throw new AppError("Utilisateur introuvable", 404);
+  }
+
+  if (data.email && data.email !== currentUser.email) {
+    if (isDemoEmail(currentUser.email)) {
+      throw new AppError(
+        "L'email du compte de démonstration ne peut pas être modifié",
+        403,
+      );
+    }
+
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
-
-    if (existingUser && existingUser.id !== userId) {
+    if (existingUser) {
       throw new AppError("Cette adresse email est déjà utilisée", 409);
     }
   }
@@ -123,13 +140,18 @@ export async function updatePassword(
   data: UpdatePasswordInput,
 ) {
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
   });
   if (!user) {
     throw new AppError("Aucun utilisateur trouvé", 404);
   }
+  if (isDemoEmail(user.email)) {
+    throw new AppError(
+      "Le mot de passe du compte de démonstration ne peut pas être modifié",
+      403,
+    );
+  }
+
   const passwordVerif = await bcrypt.compare(
     data.currentPassword,
     user.passwordHash,
@@ -137,15 +159,13 @@ export async function updatePassword(
   if (!passwordVerif) {
     throw new AppError("Mot de passe actuel incorrect", 401);
   }
+
   const hashNewPassword = await bcrypt.hash(data.newPassword, 12);
   await prisma.user.update({
     where: { id: userId },
-    data: {
-      passwordHash: hashNewPassword,
-    },
+    data: { passwordHash: hashNewPassword },
   });
 }
-
 export async function forgotPassword(data: ForgotPasswordInput) {
   const user = await prisma.user.findUnique({
     where: {
@@ -197,4 +217,25 @@ export async function resetPassword(data: ResetPasswordInput) {
       resetTokenExpiresAt: null,
     },
   });
+}
+
+export async function loginDemoUser() {
+  const demoEmail = process.env.DEMO_EMAIL;
+  if (!demoEmail) {
+    throw new AppError("Compte de démonstration indisponible", 503);
+  }
+  const user = await prisma.user.findUnique({
+    where: { email: demoEmail },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      role: true,
+    },
+  });
+  if (!user) {
+    throw new AppError("Compte de démonstration indisponible", 503);
+  }
+  return user;
 }
