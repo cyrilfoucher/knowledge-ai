@@ -11,6 +11,7 @@ interface AuthContextType {
   signUp: (name: string, email: string, password: string) => Promise<Utilisateur>;
   logout: () => Promise<void>;
   updateProfile: (name: string, email: string) => Promise<void>;
+  loginDemo: () => Promise<Utilisateur>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,8 +21,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Utilisateur | null>(null);
   const [loading, setLoading] = useState(true);
   const isAuthenticated = Boolean(user);
+
   const login = async (email: string, password: string) => {
-    const response = await api.post("/auth/login", { email, password });
+    const response = await api.post<{ user: Utilisateur }>("/auth/login", { email, password });
+    setUser(response.data.user);
+    return response.data.user;
+  };
+  const loginDemo = async () => {
+    const response = await api.post<{ user: Utilisateur }>("/auth/demo");
     setUser(response.data.user);
     return response.data.user;
   };
@@ -35,13 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
   const updateProfile = async (name: string, email: string) => {
-    const response = await api.patch("/auth/me", { name, email });
+    const response = await api.patch<{ user: Utilisateur }>("/auth/me", { name, email });
     setUser(response.data.user);
   };
   useEffect(() => {
     const checkCookie = async () => {
       try {
-        const response = await api.get("/auth/me");
+        const response = await api.get<{ user: Utilisateur }>("/auth/me");
         setUser(response.data.user);
       } catch {
         setUser(null);
@@ -53,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, loading, login, signUp, logout, updateProfile }}
+      value={{ user, isAuthenticated, loading, login, signUp, logout, updateProfile, loginDemo }}
     >
       {children}
     </AuthContext.Provider>

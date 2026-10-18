@@ -1,14 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 import type { ExploreResponse, PublicKnowledge } from "../types/knowledge";
 import Card from "../components/ui/Card";
 import { NotebookPen, Share2, Bot } from "lucide-react";
+import Button from "../components/ui/Button";
+import { toast } from "sonner";
 
 function Home() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loginDemo } = useAuth();
+  const navigate = useNavigate();
+  const [demoLoading, setDemoLoading] = useState(false);
   const [latest, setLatest] = useState<PublicKnowledge[]>([]);
+
   useEffect(() => {
     async function loadLatest() {
       try {
@@ -18,6 +23,18 @@ function Home() {
     }
     loadLatest();
   }, []);
+
+  async function handleDemo() {
+    try {
+      setDemoLoading(true);
+      await loginDemo();
+      navigate("/knowledge");
+    } catch {
+      toast.error("Le compte de démonstration est indisponible pour le moment.");
+    } finally {
+      setDemoLoading(false);
+    }
+  }
   return (
     <>
       <section className="py-16 text-center">
@@ -40,12 +57,22 @@ function Home() {
               Mes connaissances
             </Link>
           ) : (
-            <Link
-              to="/register"
-              className="rounded-lg border border-border px-5 py-2.5 font-medium hover:bg-surface"
-            >
-              Créer un compte
-            </Link>
+            <>
+              <Link
+                to="/register"
+                className="rounded-lg border border-border px-5 py-2.5 font-medium hover:bg-surface"
+              >
+                Créer un compte
+              </Link>
+              <Button
+                variant="secondary"
+                onClick={handleDemo}
+                disabled={demoLoading}
+                className="px-5 py-2.5 text-base! rounded-lg"
+              >
+                {demoLoading ? "Connexion…" : "Essayer la démo"}
+              </Button>
+            </>
           )}
         </div>
       </section>
@@ -57,9 +84,9 @@ function Home() {
               <Link
                 to={`/explore/${knowledge.id}`}
                 key={knowledge.id}
-                className="block hover:opacity-80"
+                className="block h-full hover:opacity-80"
               >
-                <Card>
+                <Card className="h-full">
                   <h3 className="font-semibold text-text line-clamp-2">{knowledge.title}</h3>
                   <p className="mt-2 text-sm text-muted line-clamp-3">{knowledge.content}</p>
                   <p className="mt-3 text-xs text-muted">Par {knowledge.author.name}</p>
