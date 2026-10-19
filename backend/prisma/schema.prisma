@@ -18,16 +18,16 @@ enum Role {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  name         String
-  role         Role     @default(USER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  resetTokenHash String? @unique
+  id                  String      @id @default(uuid())
+  email               String      @unique
+  passwordHash        String
+  name                String
+  role                Role        @default(USER)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  resetTokenHash      String?     @unique
   resetTokenExpiresAt DateTime?
-  knowledges Knowledge[]
+  knowledges          Knowledge[]
 }
 
 enum Visibility {
@@ -36,13 +36,30 @@ enum Visibility {
 }
 
 model Knowledge {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  title String 
-  content String
+  id         String     @id @default(uuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  content    String
   visibility Visibility @default(PRIVATE)
-  authorId String
-  author User @relation (fields:[authorId],references:[id],onDelete:Cascade)
+  authorId   String
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags       Tag[]
+
   @@index([authorId])
+  @@index([categoryId])
+}
+
+model Category {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  knowledges Knowledge[]
+}
+
+model Tag {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  knowledges Knowledge[]
 }
