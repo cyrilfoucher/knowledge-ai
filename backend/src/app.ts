@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import knowledgesRoutes from "./routes/knowledgeRoutes.js";
 import exploreRoute from "./routes/exploreRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 const app = express();
 app.use(
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/knowledges", knowledgesRoutes);
 app.use("/explore", exploreRoute);
+app.use("/categories", categoryRoutes);
 app.use("/admin", adminRoutes);
 app.use(ErrorMiddleware);
 
