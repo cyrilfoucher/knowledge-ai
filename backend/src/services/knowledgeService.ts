@@ -17,12 +17,35 @@ export async function createKnowledge(
       403,
     );
   }
+
+  if (data.categoryId) {
+    const category = await prisma.category.findUnique({
+      where: { id: data.categoryId },
+    });
+    if (!category) {
+      throw new AppError("Catégorie introuvable", 400);
+    }
+  }
+
+  const tagNames = [...new Set(data.tags ?? [])];
+
   const publication = await prisma.knowledge.create({
     data: {
       title: data.title,
       content: data.content,
       visibility: data.visibility,
       authorId,
+      categoryId: data.categoryId,
+      tags: {
+        connectOrCreate: tagNames.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+    include: {
+      category: { select: { id: true, name: true } },
+      tags: { select: { id: true, name: true } },
     },
   });
   return publication;
@@ -41,6 +64,10 @@ export async function getMyKnowledges(
       orderBy: { updatedAt: "desc" },
       skip: (page - 1) * limit,
       take: limit,
+      include: {
+        category: { select: { id: true, name: true } },
+        tags: { select: { id: true, name: true } },
+      },
     }),
     prisma.knowledge.count({
       where: {
@@ -53,7 +80,11 @@ export async function getMyKnowledges(
 
 export async function getKnowledgeById(id: string, user: TokenPayload) {
   const knowledge = await prisma.knowledge.findUnique({
-    where: { id },
+    where: { id: id },
+    include: {
+      category: { select: { id: true, name: true } },
+      tags: { select: { id: true, name: true } },
+    },
   });
   if (!knowledge) {
     throw new AppError("Connaissance introuvable", 404);
@@ -83,6 +114,7 @@ export async function updateKnowledgeById(
       403,
     );
   }
+
   const touchesPublic =
     knowledge.visibility === "PUBLIC" || data.visibility === "PUBLIC";
   if (touchesPublic && (await isDemoUser(user.userId))) {
@@ -91,9 +123,36 @@ export async function updateKnowledgeById(
       403,
     );
   }
+
+  if (data.categoryId) {
+    const category = await prisma.category.findUnique({
+      where: { id: data.categoryId },
+    });
+    if (!category) {
+      throw new AppError("Catégorie introuvable", 400);
+    }
+  }
+
+  const { tags, ...fields } = data;
+
   const updateKnowledge = await prisma.knowledge.update({
     where: { id: id },
-    data: data,
+    data: {
+      ...fields,
+      tags: tags
+        ? {
+            set: [],
+            connectOrCreate: [...new Set(tags)].map((name) => ({
+              where: { name },
+              create: { name },
+            })),
+          }
+        : undefined,
+    },
+    include: {
+      category: { select: { id: true, name: true } },
+      tags: { select: { id: true, name: true } },
+    },
   });
   return updateKnowledge;
 }

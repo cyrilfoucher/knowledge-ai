@@ -11,6 +11,18 @@ export const CreateKnowledgeSchema = z.object({
     .trim()
     .min(10, "Le contenu doit avoir au moins 10 caractères"),
   visibility: z.enum(["PRIVATE", "PUBLIC"]).optional(),
+  categoryId: z.uuid({ message: "Catégorie invalide" }).nullable().optional(),
+  tags: z
+    .array(
+      z
+        .string()
+        .trim()
+        .toLowerCase()
+        .min(1, "Un tag ne peut pas être vide")
+        .max(30, "Un tag ne doit pas dépasser 30 caractères"),
+    )
+    .max(10, "10 tags maximum")
+    .optional(),
 });
 export type CreateKnowledgeInput = z.infer<typeof CreateKnowledgeSchema>;
 

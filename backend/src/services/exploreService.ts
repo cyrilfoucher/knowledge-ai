@@ -10,7 +10,11 @@ export async function getPublicKnowledges(page: number, limit: number) {
       orderBy: { updatedAt: "desc" },
       skip: (page - 1) * limit,
       take: limit,
-      include: { author: { select: { name: true } } },
+      include: {
+        author: { select: { name: true } },
+        category: { select: { id: true, name: true } },
+        tags: { select: { id: true, name: true } },
+      },
     }),
     prisma.knowledge.count({
       where: {
@@ -24,7 +28,11 @@ export async function getPublicKnowledges(page: number, limit: number) {
 export async function getPublicKnowledgeById(id: string) {
   const knowledge = await prisma.knowledge.findFirst({
     where: { visibility: "PUBLIC", id: id },
-    include: { author: { select: { name: true } } },
+    include: {
+      author: { select: { name: true } },
+      category: { select: { id: true, name: true } },
+      tags: { select: { id: true, name: true } },
+    },
   });
   if (!knowledge) {
     throw new AppError("Fiche de connaissance introuvable", 404);
