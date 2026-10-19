@@ -12,6 +12,7 @@ import bcrypt from "bcryptjs";
 import { randomBytes, createHash } from "node:crypto";
 import { sendEmail } from "../utils/email.js";
 import { welcomeEmail, resetPasswordEmail } from "../utils/emailTemplates.js";
+import { isDemoEmail } from "../utils/demo.js";
 
 export async function registerUser(data: RegisterInput) {
   const userExiste = await prisma.user.findUnique({
@@ -86,9 +87,6 @@ export async function getCurrentUser(userId: string) {
   return user;
 }
 
-function isDemoEmail(email: string) {
-  return email === process.env.DEMO_EMAIL;
-}
 export async function updateCurrentUser(
   userId: string,
   data: UpdateProfileInput,

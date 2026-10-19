@@ -5,11 +5,18 @@ import type {
 } from "../schemas/knowledgeSchema.js";
 import type { TokenPayload } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
+import { isDemoUser } from "../utils/demo.js";
 
 export async function createKnowledge(
   authorId: string,
   data: CreateKnowledgeInput,
 ) {
+  if (data.visibility === "PUBLIC" && (await isDemoUser(authorId))) {
+    throw new AppError(
+      "Le compte de démonstration ne peut pas publier de fiche publique",
+      403,
+    );
+  }
   const publication = await prisma.knowledge.create({
     data: {
       title: data.title,
@@ -76,6 +83,14 @@ export async function updateKnowledgeById(
       403,
     );
   }
+  const touchesPublic =
+    knowledge.visibility === "PUBLIC" || data.visibility === "PUBLIC";
+  if (touchesPublic && (await isDemoUser(user.userId))) {
+    throw new AppError(
+      "Le compte de démonstration ne peut pas modifier une fiche publique",
+      403,
+    );
+  }
   const updateKnowledge = await prisma.knowledge.update({
     where: { id: id },
     data: data,
@@ -89,6 +104,12 @@ export async function deleteKnowledgeById(id: string, user: TokenPayload) {
   if (!canDelete) {
     throw new AppError(
       "Vous n'avez pas le droit de supprimer cette connaissance",
+      403,
+    );
+  }
+  if (knowledge.visibility === "PUBLIC" && (await isDemoUser(user.userId))) {
+    throw new AppError(
+      "Le compte de démonstration ne peut pas supprimer une fiche publique",
       403,
     );
   }
