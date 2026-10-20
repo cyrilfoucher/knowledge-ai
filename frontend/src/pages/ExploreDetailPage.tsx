@@ -11,6 +11,7 @@ import { ArrowLeft, EyeOff, Trash2 } from "lucide-react";
 import Textarea from "../components/ui/Textarea";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 
 function ExploreKnowledgeDetailPage() {
   const { id } = useParams();
@@ -76,6 +77,9 @@ function ExploreKnowledgeDetailPage() {
     return (
       <Card>
         <h2 className="text-xl font-semibold text-heading">{knowledge.title}</h2>
+        <div className="mt-2">
+          <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />
+        </div>
         <p className="mt-1 text-xs text-muted">
           Par {knowledge.author.name} · Modifiée le{" "}
           {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}

@@ -19,7 +19,7 @@ export const CreateKnowledgeSchema = z.object({
         .trim()
         .toLowerCase()
         .min(1, "Un tag ne peut pas être vide")
-        .max(30, "Un tag ne doit pas dépasser 30 caractères"),
+        .max(20, "Un tag ne doit pas dépasser 20 caractères"),
     )
     .max(10, "10 tags maximum")
     .optional(),

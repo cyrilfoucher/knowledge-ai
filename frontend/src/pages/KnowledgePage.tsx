@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
+import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 
 function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
@@ -72,6 +73,9 @@ function KnowledgePage() {
                     <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
                       {knowledge.visibility === "PUBLIC" ? "Publique" : "Privée"}
                     </span>
+                  </div>
+                  <div className="mt-2">
+                    <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
                   <p className="mt-3 text-muted text-xs">

@@ -8,6 +8,7 @@ import Button from "../components/ui/Button";
 import type { Knowledge } from "../types/knowledge";
 import { ArrowLeft, Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
@@ -60,6 +61,9 @@ function KnowledgeDetailPage() {
     return (
       <Card>
         <h2 className="text-xl font-semibold text-heading">{knowledge.title}</h2>
+        <div className="mt-2">
+          <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />
+        </div>
         <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
         {deleteError && (
           <Alert variant="danger" className="mt-4">

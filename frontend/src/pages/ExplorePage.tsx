@@ -7,6 +7,7 @@ import Card from "../components/ui/Card";
 import { Link } from "react-router-dom";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
+import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 
 function ExplorePage() {
   const [data, setData] = useState<ExploreResponse | null>(null);
@@ -61,6 +62,9 @@ function ExplorePage() {
                 <Card>
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-heading">{knowledge.title}</h2>
+                  </div>
+                  <div className="mt-2">
+                    <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
                   <p className="mt-3 text-muted text-xs">
