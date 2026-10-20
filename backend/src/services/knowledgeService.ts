@@ -6,6 +6,12 @@ import type {
 import type { TokenPayload } from "../utils/jwt.js";
 import AppError from "../errors/AppError.js";
 import { isDemoUser } from "../utils/demo.js";
+import type { Prisma } from "../generated/prisma/client.js";
+import type { KnowledgeQueryInput } from "../schemas/knowledgeQuerySchema.js";
+import {
+  buildKnowledgeFilters,
+  buildKnowledgeOrderBy,
+} from "../utils/knowledgeFilters.js";
 
 export async function createKnowledge(
   authorId: string,
@@ -53,26 +59,25 @@ export async function createKnowledge(
 
 export async function getMyKnowledges(
   authorId: string,
-  page: number,
-  limit: number,
+  query: KnowledgeQueryInput,
 ) {
+  const where: Prisma.KnowledgeWhereInput = {
+    ...buildKnowledgeFilters(query),
+    authorId,
+  };
   const [knowledges, total] = await Promise.all([
     prisma.knowledge.findMany({
-      where: {
-        authorId,
-      },
-      orderBy: { updatedAt: "desc" },
-      skip: (page - 1) * limit,
-      take: limit,
+      where: where,
+      orderBy: buildKnowledgeOrderBy(query.sort),
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
       include: {
         category: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true } },
       },
     }),
     prisma.knowledge.count({
-      where: {
-        authorId,
-      },
+      where: where,
     }),
   ]);
   return { knowledges, total };

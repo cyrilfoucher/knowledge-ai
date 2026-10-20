@@ -1,15 +1,23 @@
 import { prisma } from "../lib/prisma.js";
 import AppError from "../errors/AppError.js";
+import {
+  buildKnowledgeFilters,
+  buildKnowledgeOrderBy,
+} from "../utils/knowledgeFilters.js";
+import type { KnowledgeQueryInput } from "../schemas/knowledgeQuerySchema.js";
+import type { Prisma } from "../generated/prisma/client.js";
 
-export async function getPublicKnowledges(page: number, limit: number) {
+export async function getPublicKnowledges(query: KnowledgeQueryInput) {
+  const where: Prisma.KnowledgeWhereInput = {
+    ...buildKnowledgeFilters(query),
+    visibility: "PUBLIC",
+  };
   const [knowledges, total] = await Promise.all([
     prisma.knowledge.findMany({
-      where: {
-        visibility: "PUBLIC",
-      },
-      orderBy: { updatedAt: "desc" },
-      skip: (page - 1) * limit,
-      take: limit,
+      where: where,
+      orderBy: buildKnowledgeOrderBy(query.sort),
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
       include: {
         author: { select: { name: true } },
         category: { select: { id: true, name: true } },
@@ -17,9 +25,7 @@ export async function getPublicKnowledges(page: number, limit: number) {
       },
     }),
     prisma.knowledge.count({
-      where: {
-        visibility: "PUBLIC",
-      },
+      where: where,
     }),
   ]);
   return { knowledges, total };
