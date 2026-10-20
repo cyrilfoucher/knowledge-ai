@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 import api from "../api/axios";
 import Alert from "../components/ui/Alert";
 import type { Knowledge } from "../types/knowledge";
-import type { KnowledgeFormData } from "../schemas/knowledgeSchema";
 import Card from "../components/ui/Card";
+import type { KnowledgePayload } from "../types/knowledge";
 import KnowledgeForm from "../components/knowledge/KnowledgeForm";
 import { toast } from "sonner";
 
@@ -29,7 +29,7 @@ function KnowledgeEdit() {
     }
     callKnowledge();
   }, [id]);
-  async function handleUpdate(data: KnowledgeFormData) {
+  async function handleUpdate(data: KnowledgePayload) {
     await api.patch(`/knowledges/${id}`, data);
     toast.success("Fiche modifiée");
     navigate(`/knowledge/${id}`);
@@ -51,6 +51,8 @@ function KnowledgeEdit() {
             title: knowledge.title,
             content: knowledge.content,
             visibility: knowledge.visibility,
+            categoryId: knowledge.category?.id ?? "",
+            tags: knowledge.tags.map((tag) => tag.name).join(", "),
           }}
           submitLabel="Enregistrer"
           onSubmit={handleUpdate}

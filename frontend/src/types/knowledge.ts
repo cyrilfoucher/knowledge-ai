@@ -1,3 +1,5 @@
+import type { KnowledgeFormData } from "../schemas/knowledgeSchema";
+
 export type Visibility = "PRIVATE" | "PUBLIC";
 
 export interface Knowledge {
@@ -8,6 +10,8 @@ export interface Knowledge {
   authorId: string;
   createdAt: string;
   updatedAt: string;
+  category: Category | null;
+  tags: Tag[];
 }
 
 export type PublicKnowledge = Knowledge & { author: { name: string } };
@@ -26,4 +30,19 @@ export type MyKnowledgesResponse = {
   limit: number;
   total: number;
   totalPages: number;
+};
+
+export type Tag = {
+  id: string;
+  name: string;
+};
+
+export type Category = {
+  id: string;
+  name: string;
+};
+
+export type KnowledgePayload = Omit<KnowledgeFormData, "categoryId" | "tags"> & {
+  categoryId: string | null;
+  tags: string[];
 };

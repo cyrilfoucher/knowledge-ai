@@ -1,15 +1,15 @@
 import PageHeader from "../layouts/PageHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import type { KnowledgeFormData } from "../schemas/knowledgeSchema";
 import Card from "../components/ui/Card";
 import api from "../api/axios";
 import KnowledgeForm from "../components/knowledge/KnowledgeForm";
+import type { KnowledgePayload } from "../types/knowledge";
 import { toast } from "sonner";
 
 function CreateKnowledge() {
   const navigate = useNavigate();
-  async function handleCreate(data: KnowledgeFormData) {
+  async function handleCreate(data: KnowledgePayload) {
     await api.post("/knowledges", data);
     toast.success("Fiche créée");
     navigate("/knowledge");
@@ -29,7 +29,13 @@ function CreateKnowledge() {
       />
       <Card>
         <KnowledgeForm
-          defaultValues={{ title: "", content: "", visibility: "PRIVATE" }}
+          defaultValues={{
+            title: "",
+            content: "",
+            visibility: "PRIVATE",
+            categoryId: "",
+            tags: "",
+          }}
           submitLabel="Créer la fiche"
           onSubmit={handleCreate}
         />
