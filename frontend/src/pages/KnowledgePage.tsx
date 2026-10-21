@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
+import KnowledgeFilters from "../components/knowledge/KnowledgeFilters";
 
 function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
@@ -19,6 +20,8 @@ function KnowledgePage() {
   const limit = Number(searchParams.get("limit") ?? 10);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const q = searchParams.get("q") ?? "";
+  const sort = searchParams.get("sort") ?? "recent";
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -59,6 +62,9 @@ function KnowledgePage() {
       return <Alert variant="danger">{error}</Alert>;
     }
     if (knowledges.length === 0) {
+      if (q) {
+        return <p className="tex-muted">Aucune fiche ne correspond à ta recherche</p>;
+      }
       return <p className="text-muted">Tu n’as encore aucune connaissance saisie.</p>;
     }
     return (
@@ -108,6 +114,9 @@ function KnowledgePage() {
   return (
     <>
       <PageHeader title="Mes connaissances" />
+      <div className="mb-6">
+        <KnowledgeFilters q={q} sort={sort} onChange={updateParams} />
+      </div>
       <Link
         to="/knowledge/new"
         className="mb-6 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-on-primary hover:bg-primary-hover"

@@ -8,6 +8,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
+import KnowledgeFilter from "../components/knowledge/KnowledgeFilters";
 
 function ExplorePage() {
   const [data, setData] = useState<ExploreResponse | null>(null);
@@ -16,6 +17,9 @@ function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
+  const q = searchParams.get("q") ?? "";
+  const sort = searchParams.get("sort") ?? "recent";
+
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
     for (const [key, value] of Object.entries(values)) {
@@ -27,6 +31,7 @@ function ExplorePage() {
     }
     setSearchParams(next);
   }
+
   useEffect(() => {
     window.scrollTo(0, 0);
     async function loadingKnowledge() {
@@ -52,8 +57,12 @@ function ExplorePage() {
       return <Alert variant="danger">{error}</Alert>;
     }
     if (!data || data.knowledges.length === 0) {
+      if (q) {
+        return <p className="text-muted">Aucune fiche ne correspond à ta recherche</p>;
+      }
       return <p className="text-muted">Aucune fiche publique pour le moment</p>;
     }
+
     return (
       <>
         <div className="mb-4 flex items-center justify-between">
@@ -99,6 +108,9 @@ function ExplorePage() {
   return (
     <>
       <PageHeader title="Découvrir" subtitle="Les connaissances partagées par la communauté" />
+      <div className="mb-6">
+        <KnowledgeFilter q={q} sort={sort} onChange={updateParams} />
+      </div>
       {renderContent()}
     </>
   );
