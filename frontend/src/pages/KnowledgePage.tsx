@@ -4,7 +4,7 @@ import api from "../api/axios";
 import type { Knowledge, MyKnowledgesResponse } from "../types/knowledge";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
@@ -14,17 +14,30 @@ function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page") ?? 1);
+  const limit = Number(searchParams.get("limit") ?? 10);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+
+  function updateParams(values: Record<string, string>) {
+    const next = new URLSearchParams(searchParams);
+    for (const [key, value] of Object.entries(values)) {
+      if (value) {
+        next.set(key, value);
+      } else {
+        next.delete(key);
+      }
+    }
+    setSearchParams(next);
+  }
 
   useEffect(() => {
     async function fetchKnowledges() {
       window.scrollTo(0, 0);
       try {
         const response = await api.get<MyKnowledgesResponse>("/knowledges", {
-          params: { page, limit },
+          params: Object.fromEntries(searchParams),
         });
 
         setKnowledges(response.data.knowledges);
@@ -37,7 +50,7 @@ function KnowledgePage() {
       }
     }
     fetchKnowledges();
-  }, [page, limit]);
+  }, [searchParams]);
   function renderContent() {
     if (loading) {
       return <p className="text-muted">Chargement en cours...</p>;
@@ -57,10 +70,7 @@ function KnowledgePage() {
           </p>
           <PageSizeSelect
             value={limit}
-            onChange={(value) => {
-              setLimit(value);
-              setPage(1);
-            }}
+            onChange={(value) => updateParams({ limit: String(value), page: "" })}
           />
         </div>
         <ul className="space-y-4">
@@ -86,7 +96,11 @@ function KnowledgePage() {
             </li>
           ))}
         </ul>
-        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => updateParams({ page: String(newPage) })}
+        />
       </>
     );
   }

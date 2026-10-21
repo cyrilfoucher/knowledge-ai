@@ -4,7 +4,7 @@ import api from "../api/axios";
 import type { ExploreResponse } from "../types/knowledge";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
@@ -13,14 +13,28 @@ function ExplorePage() {
   const [data, setData] = useState<ExploreResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page") ?? 1);
+  const limit = Number(searchParams.get("limit") ?? 10);
+  function updateParams(values: Record<string, string>) {
+    const next = new URLSearchParams(searchParams);
+    for (const [key, value] of Object.entries(values)) {
+      if (value) {
+        next.set(key, value);
+      } else {
+        next.delete(key);
+      }
+    }
+    setSearchParams(next);
+  }
   useEffect(() => {
     window.scrollTo(0, 0);
     async function loadingKnowledge() {
       try {
         setError(null);
-        const response = await api.get<ExploreResponse>("/explore", { params: { page, limit } });
+        const response = await api.get<ExploreResponse>("/explore", {
+          params: Object.fromEntries(searchParams),
+        });
         setData(response.data);
       } catch {
         setError("Impossible de charger les données");
@@ -29,7 +43,7 @@ function ExplorePage() {
       }
     }
     loadingKnowledge();
-  }, [page, limit]);
+  }, [searchParams]);
   function renderContent() {
     if (loading) {
       return <p className="text-muted">Chargement...</p>;
@@ -49,10 +63,7 @@ function ExplorePage() {
           </p>
           <PageSizeSelect
             value={limit}
-            onChange={(value) => {
-              setLimit(value);
-              setPage(1);
-            }}
+            onChange={(value) => updateParams({ limit: String(value), page: "" })}
           />
         </div>
         <ul className="space-y-4">
@@ -76,7 +87,11 @@ function ExplorePage() {
             </li>
           ))}
         </ul>
-        <Pagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
+        <Pagination
+          page={page}
+          totalPages={data.totalPages}
+          onPageChange={(newPage) => updateParams({ page: String(newPage) })}
+        />
       </>
     );
   }
