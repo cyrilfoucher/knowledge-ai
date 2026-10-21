@@ -19,6 +19,7 @@ function ExplorePage() {
   const limit = Number(searchParams.get("limit") ?? 10);
   const q = searchParams.get("q") ?? "";
   const sort = searchParams.get("sort") ?? "recent";
+  const category = searchParams.get("category") ?? "";
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -109,7 +110,7 @@ function ExplorePage() {
     <>
       <PageHeader title="Découvrir" subtitle="Les connaissances partagées par la communauté" />
       <div className="mb-6">
-        <KnowledgeFilter q={q} sort={sort} onChange={updateParams} />
+        <KnowledgeFilter q={q} sort={sort} category={category} onChange={updateParams} />
       </div>
       {renderContent()}
     </>

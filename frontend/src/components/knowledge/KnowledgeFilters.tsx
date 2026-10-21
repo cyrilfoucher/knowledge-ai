@@ -1,14 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../ui/Button";
+import api from "../../api/axios";
+import type { Category } from "../../types/knowledge";
 
 interface KnowledgeFiltersProps {
   q: string;
   onChange: (values: Record<string, string>) => void;
   sort: string;
+  category: string;
 }
 
-function KnowledgeFilters({ q, onChange, sort }: KnowledgeFiltersProps) {
+function KnowledgeFilters({ q, onChange, sort, category }: KnowledgeFiltersProps) {
   const [search, setSearch] = useState(q);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const response = await api.get<{ categories: Category[] }>("/categories");
+        setCategories(response.data.categories);
+      } catch {
+        setCategories([]);
+      }
+    }
+    loadCategories();
+  }, []);
+
   function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     onChange({ q: search.trim(), page: "" });
@@ -25,6 +43,18 @@ function KnowledgeFilters({ q, onChange, sort }: KnowledgeFiltersProps) {
         />
         <Button type="submit">Rechercher</Button>
       </div>
+      <select
+        value={category}
+        onChange={(event) => onChange({ category: event.target.value, page: "" })}
+        className="rounded-lg border border-border bg-transparent px-3 py-2"
+      >
+        <option value="">Toutes les catégories</option>
+        {categories.map((categorie) => (
+          <option key={categorie.id} value={categorie.id}>
+            {categorie.name}
+          </option>
+        ))}
+      </select>
       <select
         value={sort}
         onChange={(event) => onChange({ sort: event.target.value, page: "" })}

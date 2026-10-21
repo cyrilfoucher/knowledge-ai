@@ -22,6 +22,7 @@ function KnowledgePage() {
   const [total, setTotal] = useState(0);
   const q = searchParams.get("q") ?? "";
   const sort = searchParams.get("sort") ?? "recent";
+  const category = searchParams.get("category") ?? "";
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -115,7 +116,7 @@ function KnowledgePage() {
     <>
       <PageHeader title="Mes connaissances" />
       <div className="mb-6">
-        <KnowledgeFilters q={q} sort={sort} onChange={updateParams} />
+        <KnowledgeFilters q={q} sort={sort} category={category} onChange={updateParams} />
       </div>
       <Link
         to="/knowledge/new"
