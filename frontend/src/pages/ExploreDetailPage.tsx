@@ -7,7 +7,7 @@ import Card from "../components/ui/Card";
 import type { PublicKnowledge } from "../types/knowledge";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../components/ui/Button";
-import { ArrowLeft, EyeOff, Trash2 } from "lucide-react";
+import { ArrowLeft, EyeOff, Trash2, Sparkles } from "lucide-react";
 import Textarea from "../components/ui/Textarea";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
@@ -84,6 +84,14 @@ function ExploreKnowledgeDetailPage() {
           Par {knowledge.author.name} · Modifiée le{" "}
           {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
         </p>
+        {knowledge.summary && (
+          <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
+            <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-primary">
+              <Sparkles size={14} /> Résumé IA
+            </p>
+            <p className="whitespace-pre-line text-sm">{knowledge.summary}</p>
+          </div>
+        )}
         <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
         {isAdmin && (
           <div className="mt-6 flex justify-end gap-3">

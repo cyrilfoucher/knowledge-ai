@@ -6,9 +6,10 @@ import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import type { Knowledge } from "../types/knowledge";
-import { ArrowLeft, Trash2, Pencil } from "lucide-react";
+import { ArrowLeft, Trash2, Pencil, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
+import { isAxiosError } from "axios";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ function KnowledgeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     async function callKnowledge() {
@@ -48,6 +50,23 @@ function KnowledgeDetailPage() {
       setDeleting(false);
     }
   }
+  async function handleGenerateSummary() {
+    try {
+      setGenerating(true);
+      const response = await api.post<{ knowledge: Knowledge }>(`/knowledges/${id}/summary`);
+      setKnowledge(response.data.knowledge);
+      toast.success("Résumé généré");
+    } catch (error) {
+      toast.error(
+        isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : "La génération du résumé a échoué."
+      );
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   function renderContent() {
     if (loading) {
       return <p className="text-muted">Chargement en cours...</p>;
@@ -64,13 +83,34 @@ function KnowledgeDetailPage() {
         <div className="mt-2">
           <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />
         </div>
+        {knowledge.summary && (
+          <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
+            <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-primary">
+              <Sparkles size={14} /> Résumé IA
+            </p>
+            <p className="whitespace-pre-line text-sm">{knowledge.summary}</p>
+          </div>
+        )}
         <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
         {deleteError && (
           <Alert variant="danger" className="mt-4">
             {deleteError}
           </Alert>
         )}
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-end gap-3 flex-wrap">
+          <Button
+            variant="secondary"
+            onClick={handleGenerateSummary}
+            disabled={generating}
+            className="inline-flex items-center gap-2"
+          >
+            <Sparkles size={16} />{" "}
+            {generating
+              ? "Géneration..."
+              : knowledge.summary
+                ? "Régénérer le résumé"
+                : "Générer un résumé"}{" "}
+          </Button>
           <Link
             to={`/knowledge/${id}/edit`}
             className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface text-heading"

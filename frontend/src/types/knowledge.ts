@@ -12,6 +12,7 @@ export interface Knowledge {
   updatedAt: string;
   category: Category | null;
   tags: Tag[];
+  summary: string | null;
 }
 
 export type PublicKnowledge = Knowledge & { author: { name: string } };

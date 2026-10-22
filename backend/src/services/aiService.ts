@@ -49,7 +49,7 @@ export async function summarizeText(
     {
       role: "system",
       content:
-        "Tu es un assistant qui résume des fiches de connaissances techniques pour les developpeurs web, fais un court résumé en français de ce texte de façon simple mais précise et claire en gardant que l'essentiel, pour les termes techniques conserve les en anglais quand cela est d'usage par rapport au developpement web. Le résumé ne doit faire au maximum que en trois ou quatre phrases sans superflu. Le tout en texte brut sans markdown, n'invente rien qui ne soit pas dans la fiche. Réponds uniquement le résumé sans introduction",
+        "Tu es un assistant qui résume des fiches de connaissances techniques pour les developpeurs web, fais un court résumé en français de ce texte de façon simple mais précise et claire en gardant que l'essentiel, pour les termes techniques conserve les en anglais quand cela est d'usage par rapport au developpement web. Le résumé ne doit faire au maximum que en trois courtes phrases sans superflu(Le résumé tient en un seul paragraphe de 60 mots maximum). Le tout en texte brut sans markdown, n'invente rien qui ne soit pas dans la fiche. Réponds uniquement le résumé sans introduction",
     },
     { role: "user", content: `Titre : ${title}\n\n${content}` },
   ]);
