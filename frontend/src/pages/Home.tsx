@@ -122,10 +122,10 @@ function Home() {
           </Card>
           <Card>
             <Bot size={24} className="text-primary" />
-            <h3 className="font-semibold text-text mt-3">Bientôt : l’IA</h3>
+            <h3 className="font-semibold text-text mt-3">Assistée par l’IA</h3>
             <p className="mt-2 text-sm text-muted">
-              Résumés automatiques, suggestions de tags et recherche intelligente dans tes
-              connaissances.
+              Résumés automatiques et suggestions de tags. Bientôt : la recherche par le sens dans
+              tes connaissances.
             </p>
           </Card>
         </div>
