@@ -64,7 +64,7 @@ export async function suggestTags(
     {
       role: "system",
       content:
-        "Tu es un assistant qui suggère des tags en rapport avec la fiche que tu auras analysée au préalable, tu en proposeras entre 3 et 5, les tags seront suggérés en minuscule,en rapport avec le developpement web, en français ou si c'est l'usage en anglais,un ou deux mot maximum par tag et tu les proposera séparés par des virgules sans phrase,ni numéro ni symbole mais uniquement des lettres minuscules,des chiffres ou un tiret (si le tag comporte deux mot comme react-router)corréspondant au tag, réponds uniquement par la liste de tag sans introduction",
+        "Tu es un assistant qui suggère des tags en rapport avec la fiche que tu auras analysée au préalable, tu en proposeras entre 3 et 5, les tags seront suggérés en minuscule,en rapport avec le developpement web,Commence par la technologie principale de la fiche. Privilégie des tags d’un seul mot, généraux et réutilisables sur d’autres fiches. en français ou si c'est l'usage en anglais,un ou deux mot maximum par tag et tu les proposera séparés par des virgules sans phrase,ni numéro ni symbole mais uniquement des lettres minuscules,des chiffres ou un tiret (si le tag comporte deux mot comme react-router)corréspondant au tag, réponds uniquement par la liste de tag sans introduction",
     },
     { role: "user", content: `Titre : ${title}\n\n${content}` },
   ]);

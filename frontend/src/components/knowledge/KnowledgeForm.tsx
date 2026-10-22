@@ -9,6 +9,8 @@ import Input from "../ui/Input";
 import Textarea from "../ui/Textarea";
 import Alert from "../ui/Alert";
 import type { Category, KnowledgePayload } from "../../types/knowledge";
+import { Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 interface KnowledgeFormProps {
   defaultValues: KnowledgeFormData;
@@ -18,12 +20,13 @@ interface KnowledgeFormProps {
 
 function KnowledgeForm({ defaultValues, submitLabel, onSubmit }: KnowledgeFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
-
+  const [suggesting, setSuggesting] = useState(false);
   const {
     register,
     handleSubmit,
     setError,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<KnowledgeFormData>({
     resolver: zodResolver(KnowledgeFormSchema),
@@ -67,6 +70,32 @@ function KnowledgeForm({ defaultValues, submitLabel, onSubmit }: KnowledgeFormPr
     }
   }
 
+  async function handleSuggestTags() {
+    const title = getValues("title");
+    const content = getValues("content");
+    if (title.trim().length < 3 || content.trim().length < 10) {
+      toast.error("Écris d'abord un titre et un contenu pour obtenir des suggestions.");
+      return;
+    }
+    setSuggesting(true);
+    try {
+      const response = await api.post<{ tags: string[] }>("/knowledges/suggest-tags", {
+        title,
+        content,
+      });
+      setValue("tags", response.data.tags.join(", "));
+      toast.success("Tags suggérés");
+    } catch (error) {
+      toast.error(
+        isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : "La suggestion de tags a échoué."
+      );
+    } finally {
+      setSuggesting(false);
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit(submit)} className="space-y-4">
       <Input
@@ -101,13 +130,27 @@ function KnowledgeForm({ defaultValues, submitLabel, onSubmit }: KnowledgeFormPr
           ))}
         </select>
       </div>
-      <Input
-        label="Tags"
-        id="tags"
-        placeholder="Ex : docker, prisma, jwt (séparés par des virgules)"
-        error={errors.tags?.message}
-        {...register("tags")}
-      />
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <div className="flex-1">
+          <Input
+            label="Tags"
+            id="tags"
+            placeholder="Ex : docker, prisma, jwt (séparés par des virgules)"
+            error={errors.tags?.message}
+            {...register("tags")}
+          />
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleSuggestTags}
+          disabled={suggesting}
+          className="inline-flex items-center justify-center gap-2"
+        >
+          <Sparkles size={16} />
+          {suggesting ? "Suggestion..." : "Suggérer des tags"}
+        </Button>
+      </div>
       <fieldset>
         <legend className="mb-1.5 text-sm font-medium">Visibilité</legend>
         <label className="flex items-center gap-2 m-2">
