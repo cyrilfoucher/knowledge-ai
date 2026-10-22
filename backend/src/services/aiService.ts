@@ -55,3 +55,23 @@ export async function summarizeText(
   ]);
   return summary.replaceAll("**", "").replaceAll("`", "");
 }
+
+export async function suggestTags(
+  title: string,
+  content: string,
+): Promise<string[]> {
+  const answer = await callMistral([
+    {
+      role: "system",
+      content:
+        "Tu es un assistant qui suggère des tags en rapport avec la fiche que tu auras analysée au préalable, tu en proposeras entre 3 et 5, les tags seront suggérés en minuscule,en rapport avec le developpement web, en français ou si c'est l'usage en anglais,un ou deux mot maximum par tag et tu les proposera séparés par des virgules sans phrase,ni numéro ni symbole mais uniquement des lettres minuscules,des chiffres ou un tiret (si le tag comporte deux mot comme react-router)corréspondant au tag, réponds uniquement par la liste de tag sans introduction",
+    },
+    { role: "user", content: `Titre : ${title}\n\n${content}` },
+  ]);
+  const tags = answer
+    .split(/[,\n]/)
+    .map((tag) => tag.toLocaleLowerCase().trim())
+    .filter((tag) => tag.length <= 20 && tag.length > 0)
+    .slice(0, 5);
+  return [...new Set(tags)];
+}

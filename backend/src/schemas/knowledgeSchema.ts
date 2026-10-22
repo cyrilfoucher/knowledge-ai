@@ -28,3 +28,9 @@ export type CreateKnowledgeInput = z.infer<typeof CreateKnowledgeSchema>;
 
 export const UpdateKnowledgeSchema = CreateKnowledgeSchema.partial();
 export type UpdateKnowledgeInput = z.infer<typeof UpdateKnowledgeSchema>;
+
+export const SuggestTagsSchema = CreateKnowledgeSchema.pick({
+  title: true,
+  content: true,
+});
+export type SuggestTagsInput = z.infer<typeof SuggestTagsSchema>;

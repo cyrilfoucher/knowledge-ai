@@ -7,6 +7,7 @@ import {
   updateKnowledgeByIdController,
   deleteKnowledgeByIdController,
   generateKnowledgeSummaryController,
+  suggestTagsController,
 } from "../controllers/knowledgeController.js";
 import { aiRateLimit } from "../middlewares/aiRateLimit.js";
 
@@ -20,4 +21,5 @@ router.get("/:id", getKnowledgeByIdController);
 router.patch("/:id", updateKnowledgeByIdController);
 router.delete("/:id", deleteKnowledgeByIdController);
 router.post("/:id/summary", aiRateLimit, generateKnowledgeSummaryController);
+router.post("/suggest-tags", aiRateLimit, suggestTagsController);
 export default router;

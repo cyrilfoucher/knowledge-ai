@@ -2,6 +2,8 @@ import type { Request, Response } from "express";
 import {
   CreateKnowledgeSchema,
   UpdateKnowledgeSchema,
+  SuggestTagsInput,
+  SuggestTagsSchema,
 } from "../schemas/knowledgeSchema.js";
 import AppError from "../errors/AppError.js";
 import {
@@ -13,6 +15,7 @@ import {
   generateKnowledgeSummary,
 } from "../services/knowledgeService.js";
 import { KnowledgeQuerySchema } from "../schemas/knowledgeQuerySchema.js";
+import { suggestTags } from "../services/aiService.js";
 
 export async function createKnowledgeController(req: Request, res: Response) {
   if (!req.user) {
@@ -78,8 +81,17 @@ export async function generateKnowledgeSummaryController(
   res: Response,
 ) {
   if (!req.user) {
-    throw new AppError("Aucun utilisateur trouvé", 404);
+    throw new AppError("Aucun utilisateur trouvé", 401);
   }
   const knowledge = await generateKnowledgeSummary(req.params.id, req.user);
   return res.status(200).json({ knowledge });
+}
+
+export async function suggestTagsController(req: Request, res: Response) {
+  if (!req.user) {
+    throw new AppError("Aucun utilisateur trouvé", 401);
+  }
+  const data = SuggestTagsSchema.parse(req.body);
+  const tags = await suggestTags(data.title, data.content);
+  return res.status(200).json({ tags });
 }
