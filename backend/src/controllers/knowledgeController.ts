@@ -10,6 +10,7 @@ import {
   getKnowledgeById,
   updateKnowledgeById,
   deleteKnowledgeById,
+  generateKnowledgeSummary,
 } from "../services/knowledgeService.js";
 import { KnowledgeQuerySchema } from "../schemas/knowledgeQuerySchema.js";
 
@@ -29,15 +30,13 @@ export async function getMyKnowledgesController(req: Request, res: Response) {
   const query = KnowledgeQuerySchema.parse(req.query);
   const { knowledges, total } = await getMyKnowledges(req.user.userId, query);
   const totalPages = Math.ceil(total / query.limit);
-  return res
-    .status(200)
-    .json({
-      knowledges,
-      total,
-      totalPages,
-      limit: query.limit,
-      page: query.page,
-    });
+  return res.status(200).json({
+    knowledges,
+    total,
+    totalPages,
+    limit: query.limit,
+    page: query.page,
+  });
 }
 
 export async function getKnowledgeByIdController(
@@ -72,4 +71,15 @@ export async function deleteKnowledgeByIdController(
   }
   await deleteKnowledgeById(req.params.id, req.user);
   return res.status(204).send();
+}
+
+export async function generateKnowledgeSummaryController(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
+  if (!req.user) {
+    throw new AppError("Aucun utilisateur trouvé", 404);
+  }
+  const knowledge = await generateKnowledgeSummary(req.params.id, req.user);
+  return res.status(200).json({ knowledge });
 }

@@ -12,6 +12,7 @@ import {
   buildKnowledgeFilters,
   buildKnowledgeOrderBy,
 } from "../utils/knowledgeFilters.js";
+import { summarizeText } from "./aiService.js";
 
 export async function createKnowledge(
   authorId: string,
@@ -153,6 +154,10 @@ export async function updateKnowledgeById(
             })),
           }
         : undefined,
+      summary:
+        data.content !== undefined && data.content !== knowledge.content
+          ? null
+          : undefined,
     },
     include: {
       category: { select: { id: true, name: true } },
@@ -180,4 +185,22 @@ export async function deleteKnowledgeById(id: string, user: TokenPayload) {
   await prisma.knowledge.delete({
     where: { id: id },
   });
+}
+
+export async function generateKnowledgeSummary(id: string, user: TokenPayload) {
+  const knowledge = await getKnowledgeById(id, user);
+  const canEdit = canManageKnowledge(knowledge.authorId, user);
+  if (!canEdit) {
+    throw new AppError("Vous n'avez pas le droit de résumer cette fiche", 403);
+  }
+  const summary = await summarizeText(knowledge.title, knowledge.content);
+  const knowledgeSummary = await prisma.knowledge.update({
+    where: { id: id },
+    data: { summary: summary },
+    include: {
+      category: { select: { id: true, name: true } },
+      tags: { select: { id: true, name: true } },
+    },
+  });
+  return knowledgeSummary;
 }
