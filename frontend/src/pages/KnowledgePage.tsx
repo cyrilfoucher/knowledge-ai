@@ -23,6 +23,7 @@ function KnowledgePage() {
   const q = searchParams.get("q") ?? "";
   const sort = searchParams.get("sort") ?? "recent";
   const category = searchParams.get("category") ?? "";
+  const tag = searchParams.get("tag") ?? "";
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -63,11 +64,12 @@ function KnowledgePage() {
       return <Alert variant="danger">{error}</Alert>;
     }
     if (knowledges.length === 0) {
-      if (q) {
-        return <p className="tex-muted">Aucune fiche ne correspond à ta recherche</p>;
+      if (q || category || tag) {
+        return <p className="text-muted">Aucune fiche ne correspond à ta recherche</p>;
       }
       return <p className="text-muted">Tu n’as encore aucune connaissance saisie.</p>;
     }
+
     return (
       <>
         <div className="mb-4 flex items-center justify-between">
@@ -92,7 +94,12 @@ function KnowledgePage() {
                     </span>
                   </div>
                   <div className="mt-2">
-                    <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
+                    <KnowledgeTags
+                      category={knowledge.category}
+                      tags={knowledge.tags}
+                      max={3}
+                      onTagClick={(name) => updateParams({ tag: name, page: "" })}
+                    />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
                   <p className="mt-3 text-muted text-xs">
@@ -116,7 +123,7 @@ function KnowledgePage() {
     <>
       <PageHeader title="Mes connaissances" />
       <div className="mb-6">
-        <KnowledgeFilters q={q} sort={sort} category={category} onChange={updateParams} />
+        <KnowledgeFilters q={q} sort={sort} category={category} onChange={updateParams} tag={tag} />
       </div>
       <Link
         to="/knowledge/new"
@@ -128,5 +135,4 @@ function KnowledgePage() {
     </>
   );
 }
-
 export default KnowledgePage;

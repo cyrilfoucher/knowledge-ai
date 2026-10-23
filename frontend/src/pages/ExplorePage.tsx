@@ -20,6 +20,7 @@ function ExplorePage() {
   const q = searchParams.get("q") ?? "";
   const sort = searchParams.get("sort") ?? "recent";
   const category = searchParams.get("category") ?? "";
+  const tag = searchParams.get("tag") ?? "";
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -58,7 +59,7 @@ function ExplorePage() {
       return <Alert variant="danger">{error}</Alert>;
     }
     if (!data || data.knowledges.length === 0) {
-      if (q) {
+      if (q || category || tag) {
         return <p className="text-muted">Aucune fiche ne correspond à ta recherche</p>;
       }
       return <p className="text-muted">Aucune fiche publique pour le moment</p>;
@@ -85,7 +86,12 @@ function ExplorePage() {
                     <h2 className="text-lg font-semibold text-heading">{knowledge.title}</h2>
                   </div>
                   <div className="mt-2">
-                    <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
+                    <KnowledgeTags
+                      category={knowledge.category}
+                      tags={knowledge.tags}
+                      max={3}
+                      onTagClick={(name) => updateParams({ tag: name, page: "" })}
+                    />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
                   <p className="mt-3 text-muted text-xs">
@@ -110,7 +116,7 @@ function ExplorePage() {
     <>
       <PageHeader title="Découvrir" subtitle="Les connaissances partagées par la communauté" />
       <div className="mb-6">
-        <KnowledgeFilter q={q} sort={sort} category={category} onChange={updateParams} />
+        <KnowledgeFilter q={q} sort={sort} category={category} onChange={updateParams} tag={tag} />
       </div>
       {renderContent()}
     </>
