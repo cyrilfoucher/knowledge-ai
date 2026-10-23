@@ -28,6 +28,7 @@ model User {
   resetTokenHash      String?     @unique
   resetTokenExpiresAt DateTime?
   knowledges          Knowledge[]
+  favorites           Favorite[]
 }
 
 enum Visibility {
@@ -48,6 +49,7 @@ model Knowledge {
   categoryId String?
   category   Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags       Tag[]
+  favorites  Favorite[]
 
   @@index([authorId])
   @@index([categoryId])
@@ -63,4 +65,15 @@ model Tag {
   id         String      @id @default(uuid())
   name       String      @unique
   knowledges Knowledge[]
+}
+
+model Favorite {
+  userId      String
+  knowledgeId String
+  createdAt   DateTime  @default(now())
+  knowledge   Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, knowledgeId])
+  @@index([knowledgeId])
 }
