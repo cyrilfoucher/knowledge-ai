@@ -10,6 +10,7 @@ import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import KnowledgeFilters from "../components/knowledge/KnowledgeFilters";
+import FavoriteButton from "../components/knowledge/FavoriteButton";
 
 function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
@@ -87,11 +88,16 @@ function KnowledgePage() {
             <li key={knowledge.id}>
               <Link to={`/knowledge/${knowledge.id}`} className="block hover:opacity-80">
                 <Card>
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-heading">{knowledge.title}</h2>
-                    <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
-                      {knowledge.visibility === "PUBLIC" ? "Publique" : "Privée"}
-                    </span>
+                  <div className="flex items-start justify-between gap-4">
+                    <h2 className="text-lg font-semibold text-heading min-w-0 wrap-break-word">
+                      {knowledge.title}
+                    </h2>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
+                        {knowledge.visibility === "PUBLIC" ? "Publique" : "Privée"}
+                      </span>
+                      <FavoriteButton knowledgeId={knowledge.id} compact />
+                    </div>
                   </div>
                   <div className="mt-2">
                     <KnowledgeTags

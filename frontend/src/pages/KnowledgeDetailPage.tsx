@@ -10,9 +10,12 @@ import { ArrowLeft, Trash2, Pencil, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import { isAxiosError } from "axios";
+import FavoriteButton from "../components/knowledge/FavoriteButton";
+import { useAuth } from "../hooks/useAuth";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
   const [knowledge, setKnowledge] = useState<Knowledge | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -79,7 +82,12 @@ function KnowledgeDetailPage() {
     }
     return (
       <Card>
-        <h2 className="text-xl font-semibold text-heading">{knowledge.title}</h2>
+        <div className="flex itemps-start justify-between gap-4">
+          <h2 className="text-xl font-semibold text-heading min-w-0 wrap-break-words">
+            {knowledge.title}
+          </h2>
+          {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} />}
+        </div>
         <div className="mt-2">
           <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />
         </div>

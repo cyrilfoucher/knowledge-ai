@@ -9,11 +9,14 @@ import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import KnowledgeFilter from "../components/knowledge/KnowledgeFilters";
+import FavoriteButton from "../components/knowledge/FavoriteButton";
+import { useAuth } from "../hooks/useAuth";
 
 function ExplorePage() {
   const [data, setData] = useState<ExploreResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
@@ -82,8 +85,11 @@ function ExplorePage() {
             <li key={knowledge.id}>
               <Link to={`/explore/${knowledge.id}`} className="block hover:opacity-80">
                 <Card>
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-heading">{knowledge.title}</h2>
+                  <div className="flex items-center justify-between gap-4">
+                    <h2 className="text-lg font-semibold text-heading min-w-0 wrap-break-word">
+                      {knowledge.title}
+                    </h2>
+                    {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} compact />}
                   </div>
                   <div className="mt-2">
                     <KnowledgeTags
