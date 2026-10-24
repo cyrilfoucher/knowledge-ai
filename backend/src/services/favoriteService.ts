@@ -1,13 +1,15 @@
 import AppError from "../errors/AppError.js";
-import { Visibility } from "../generated/prisma/enums.js";
 import { prisma } from "../lib/prisma.js";
 
 export async function addFavorite(userId: string, knowledgeId: string) {
-  const publicAndExistsKnowledge = await prisma.knowledge.findFirst({
-    where: { id: knowledgeId, visibility: "PUBLIC" },
+  const existsKnowledge = await prisma.knowledge.findFirst({
+    where: {
+      id: knowledgeId,
+      OR: [{ visibility: "PUBLIC" }, { authorId: userId }],
+    },
   });
-  if (!publicAndExistsKnowledge) {
-    throw new AppError("Fiche publique introuvable", 404);
+  if (!existsKnowledge) {
+    throw new AppError("Fiche introuvable", 404);
   }
   const favori = await prisma.favorite.upsert({
     where: { userId_knowledgeId: { userId, knowledgeId } },
@@ -35,7 +37,12 @@ export async function getFavorites(
   page: number,
   limit: number,
 ) {
-  const where = { userId, knowledge: { visibility: "PUBLIC" as const } };
+  const where = {
+    userId,
+    knowledge: {
+      OR: [{ visibility: "PUBLIC" as const }, { authorId: userId }],
+    },
+  };
 
   const [favorites, total] = await Promise.all([
     prisma.favorite.findMany({
