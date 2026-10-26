@@ -22,6 +22,7 @@ export async function getPublicKnowledges(query: KnowledgeQueryInput) {
         author: { select: { name: true } },
         category: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true } },
+        _count: { select: { likes: true } },
       },
     }),
     prisma.knowledge.count({
@@ -38,6 +39,7 @@ export async function getPublicKnowledgeById(id: string) {
       author: { select: { name: true } },
       category: { select: { id: true, name: true } },
       tags: { select: { id: true, name: true } },
+      _count: { select: { likes: true } },
     },
   });
   if (!knowledge) {

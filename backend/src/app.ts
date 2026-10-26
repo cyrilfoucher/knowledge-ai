@@ -8,6 +8,7 @@ import exploreRoute from "./routes/exploreRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
+import likeRoutes from "./routes/likeRoutes.js";
 
 const app = express();
 app.use(
@@ -24,6 +25,7 @@ app.use("/explore", exploreRoute);
 app.use("/categories", categoryRoutes);
 app.use("/admin", adminRoutes);
 app.use("/favorites", favoriteRoutes);
+app.use("/likes", likeRoutes);
 app.use(ErrorMiddleware);
 
 export default app;

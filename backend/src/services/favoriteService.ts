@@ -56,6 +56,7 @@ export async function getFavorites(
             author: { select: { name: true } },
             category: { select: { id: true, name: true } },
             tags: { select: { id: true, name: true } },
+            _count: { select: { likes: true } },
           },
         },
       },

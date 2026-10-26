@@ -75,6 +75,7 @@ export async function getMyKnowledges(
       include: {
         category: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true } },
+        _count: { select: { likes: true } },
       },
     }),
     prisma.knowledge.count({
@@ -90,6 +91,7 @@ export async function getKnowledgeById(id: string, user: TokenPayload) {
     include: {
       category: { select: { id: true, name: true } },
       tags: { select: { id: true, name: true } },
+      _count: { select: { likes: true } },
     },
   });
   if (!knowledge) {
