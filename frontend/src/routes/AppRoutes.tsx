@@ -18,6 +18,7 @@ import ExploreDetailPage from "../pages/ExploreDetailPage";
 import AdminRoute from "../components/auth/AdminRoute";
 import AdminPage from "../pages/AdminPage";
 import AboutPage from "../pages/AboutPage";
+import FavoritesPage from "../pages/FavoritesPage";
 
 function AppRoutes() {
   return (
@@ -39,6 +40,7 @@ function AppRoutes() {
           <Route path="/knowledge/new" element={<KnowledgeCreatePage />} />
           <Route path="/account" element={<MyAccount />} />
           <Route path="/knowledge/:id/edit" element={<KnowledgeEdit />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
         </Route>
         <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminPage />} />

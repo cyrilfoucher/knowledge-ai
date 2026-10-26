@@ -55,7 +55,11 @@ function FavoriteButton({ knowledgeId, compact }: FavoriteProps) {
       aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
     >
       <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
-      {!compact && (isFavorite ? "Retirer des favoris" : "Ajouter aux favoris")}
+      {!compact && (
+        <span className="hidden sm:inline">
+          {isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+        </span>
+      )}
     </Button>
   );
 }

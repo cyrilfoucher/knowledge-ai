@@ -101,6 +101,13 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
                   >
                     Mon compte
                   </NavLink>
+                  <NavLink
+                    to="/favorites"
+                    onClick={closeMenus}
+                    className="block px-4 py-2 text-sm hover:bg-bg"
+                  >
+                    Mes favoris
+                  </NavLink>
                   <button
                     onClick={handleLogout}
                     className="block w-full cursor-pointer px-4 py-2 text-left text-sm text-danger hover:bg-bg"
@@ -147,6 +154,9 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
             <>
               <NavLink to="/knowledge" onClick={closeMenus} className={mobileLink}>
                 Mes connaissances
+              </NavLink>
+              <NavLink to="/favorites" onClick={closeMenus} className={mobileLink}>
+                Mes favoris
               </NavLink>
               {isAdmin && (
                 <NavLink to="/admin" onClick={closeMenus} className={mobileLink}>
