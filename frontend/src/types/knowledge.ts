@@ -13,6 +13,7 @@ export interface Knowledge {
   category: Category | null;
   tags: Tag[];
   summary: string | null;
+  _count: { likes: number };
 }
 
 export type PublicKnowledge = Knowledge & { author: { name: string } };

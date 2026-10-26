@@ -11,6 +11,7 @@ import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import KnowledgeFilters from "../components/knowledge/KnowledgeFilters";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
+import LikeButton from "../components/knowledge/LikeButton";
 
 function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
@@ -108,9 +109,18 @@ function KnowledgePage() {
                     />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
-                  <p className="mt-3 text-muted text-xs">
-                    Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
-                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <p className="text-muted text-xs">
+                      Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
+                    </p>
+                    {knowledge.visibility === "PUBLIC" && (
+                      <LikeButton
+                        knowledgeId={knowledge.id}
+                        initialCount={knowledge._count.likes}
+                        canLike={false}
+                      />
+                    )}
+                  </div>
                 </Card>
               </Link>
             </li>

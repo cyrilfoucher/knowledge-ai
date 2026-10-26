@@ -11,11 +11,10 @@ import { toast } from "sonner";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import { isAxiosError } from "axios";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
-import { useAuth } from "../hooks/useAuth";
+import LikeButton from "../components/knowledge/LikeButton";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
-  const { isAuthenticated } = useAuth();
   const [knowledge, setKnowledge] = useState<Knowledge | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,11 +81,20 @@ function KnowledgeDetailPage() {
     }
     return (
       <Card>
-        <div className="flex itemps-start justify-between gap-4">
-          <h2 className="text-xl font-semibold text-heading min-w-0 wrap-break-words">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <h2 className="text-xl font-semibold text-heading min-w-0 wrap-break-word">
             {knowledge.title}
           </h2>
-          {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} />}
+          <div className="flex items-center gap-2">
+            {knowledge.visibility === "PUBLIC" && (
+              <LikeButton
+                knowledgeId={knowledge.id}
+                initialCount={knowledge._count.likes}
+                canLike={false}
+              />
+            )}
+            <FavoriteButton knowledgeId={knowledge.id} />
+          </div>
         </div>
         <div className="mt-2">
           <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />

@@ -11,12 +11,13 @@ import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import KnowledgeFilter from "../components/knowledge/KnowledgeFilters";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
 import { useAuth } from "../hooks/useAuth";
+import LikeButton from "../components/knowledge/LikeButton";
 
 function ExplorePage() {
   const [data, setData] = useState<ExploreResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
@@ -100,10 +101,17 @@ function ExplorePage() {
                     />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
-                  <p className="mt-3 text-muted text-xs">
-                    Par {knowledge.author.name} · Modifiée le{" "}
-                    {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
-                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <p className="text-muted text-xs">
+                      Par {knowledge.author.name} · Modifiée le{" "}
+                      {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
+                    </p>
+                    <LikeButton
+                      knowledgeId={knowledge.id}
+                      initialCount={knowledge._count.likes}
+                      canLike={isAuthenticated && knowledge.authorId !== user?.id}
+                    />
+                  </div>
                 </Card>
               </Link>
             </li>

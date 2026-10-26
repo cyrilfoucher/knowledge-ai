@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
+import LikeButton from "../components/knowledge/LikeButton";
 
 function ExploreKnowledgeDetailPage() {
   const { id } = useParams();
@@ -75,13 +76,21 @@ function ExploreKnowledgeDetailPage() {
     if (!knowledge) {
       return <p className="text-muted">Connaissance introuvable</p>;
     }
+    const canLike = isAuthenticated && knowledge.authorId !== user?.id;
     return (
       <Card>
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <h2 className="text-xl font-semibold text-heading min-w-0 wrap-break-words">
             {knowledge.title}
           </h2>
-          {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} />}
+          <div className="flex items-center gap-2">
+            <LikeButton
+              knowledgeId={knowledge.id}
+              initialCount={knowledge._count.likes}
+              canLike={canLike}
+            />
+            {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} />}
+          </div>
         </div>
         <div className="mt-2">
           <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />

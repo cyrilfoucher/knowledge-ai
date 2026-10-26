@@ -10,6 +10,7 @@ import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
+import LikeButton from "../components/knowledge/LikeButton";
 
 function FavoritesPage() {
   const [loading, setLoading] = useState(true);
@@ -96,10 +97,19 @@ function FavoritesPage() {
                     <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
                   </div>
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
-                  <p className="mt-3 text-muted text-xs">
-                    Par {knowledge.author.name} · Modifiée le{" "}
-                    {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
-                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <p className="text-muted text-xs">
+                      Par {knowledge.author.name} · Modifiée le{" "}
+                      {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
+                    </p>
+                    {knowledge.visibility === "PUBLIC" && (
+                      <LikeButton
+                        knowledgeId={knowledge.id}
+                        initialCount={knowledge._count.likes}
+                        canLike={knowledge.authorId !== user?.id}
+                      />
+                    )}
+                  </div>
                 </Card>
               </Link>
             </li>
