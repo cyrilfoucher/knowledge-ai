@@ -14,6 +14,6 @@ export const KnowledgeQuerySchema = PaginationQuerySchema.extend({
     .toLowerCase()
     .max(20, "Maximum 20 caractères")
     .optional(),
-  sort: z.enum(["recent", "oldest", "title"]).default("recent"),
+  sort: z.enum(["recent", "oldest", "title", "popular"]).default("recent"),
 });
 export type KnowledgeQueryInput = z.infer<typeof KnowledgeQuerySchema>;

@@ -24,13 +24,17 @@ export function buildKnowledgeFilters({
 
 export function buildKnowledgeOrderBy(
   sort: KnowledgeQueryInput["sort"],
-): Prisma.KnowledgeOrderByWithRelationInput {
-  const where: Prisma.KnowledgeOrderByWithRelationInput = {};
+):
+  | Prisma.KnowledgeOrderByWithRelationInput
+  | Prisma.KnowledgeOrderByWithRelationInput[] {
   if (sort === "oldest") {
     return { updatedAt: "asc" };
   }
   if (sort === "title") {
     return { title: "asc" };
+  }
+  if (sort === "popular") {
+    return [{ likes: { _count: "desc" } }, { updatedAt: "desc" }];
   }
   return { updatedAt: "desc" };
 }
