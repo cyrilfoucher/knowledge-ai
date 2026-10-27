@@ -68,7 +68,7 @@ function LikeButton({ knowledgeId, initialCount, canLike }: LikeButtonProps) {
         variant="secondary"
         onClick={handleToggle}
         disabled={loading}
-        className="inline-flex shrink-0 items-center gap-2 text-heading!"
+        className="inline-flex shrink-0 items-center gap-2 text-heading"
         aria-label={liked ? "Retirer mon J'aime" : "Aimer cette fiche"}
         aria-pressed={liked}
       >

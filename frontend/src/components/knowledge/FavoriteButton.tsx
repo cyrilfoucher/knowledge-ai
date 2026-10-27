@@ -51,7 +51,7 @@ function FavoriteButton({ knowledgeId, compact }: FavoriteProps) {
       variant="secondary"
       onClick={handleToggle}
       disabled={loading}
-      className="inline-flex shrink-0 items-center gap-2 text-heading!"
+      className="inline-flex shrink-0 items-center gap-2 text-heading"
       aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
     >
       <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
