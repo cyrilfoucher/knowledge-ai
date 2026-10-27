@@ -80,7 +80,7 @@ function ExploreKnowledgeDetailPage() {
     return (
       <Card>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <h2 className="text-xl font-semibold text-heading min-w-0 wrap-break-words">
+          <h2 className="text-xl font-semibold text-heading min-w-0 wrap-break-word">
             {knowledge.title}
           </h2>
           <div className="flex items-center gap-2">
@@ -96,8 +96,14 @@ function ExploreKnowledgeDetailPage() {
           <KnowledgeTags category={knowledge.category} tags={knowledge.tags} />
         </div>
         <p className="mt-1 text-xs text-muted">
-          Par {knowledge.author.name} · Modifiée le{" "}
-          {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
+          Par{" "}
+          <Link
+            to={`/users/${knowledge.authorId}`}
+            className="font-medium text-link hover:underline"
+          >
+            {knowledge.author.name}
+          </Link>{" "}
+          · Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
         </p>
         {knowledge.summary && (
           <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">

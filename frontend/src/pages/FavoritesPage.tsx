@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import type { ExploreResponse } from "../types/knowledge";
 import { useAuth } from "../hooks/useAuth";
@@ -20,6 +20,7 @@ function FavoritesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -99,8 +100,19 @@ function FavoritesPage() {
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
                   <div className="mt-3 flex items-center justify-between gap-4">
                     <p className="text-muted text-xs">
-                      Par {knowledge.author.name} · Modifiée le{" "}
-                      {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
+                      Par{" "}
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          navigate(`/users/${knowledge.authorId}`);
+                        }}
+                        className="cursor-pointer font-medium text-link hover:underline"
+                      >
+                        {knowledge.author.name}
+                      </button>{" "}
+                      · Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
                     </p>
                     {knowledge.visibility === "PUBLIC" && (
                       <LikeButton

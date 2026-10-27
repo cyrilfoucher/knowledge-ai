@@ -19,6 +19,7 @@ import AdminRoute from "../components/auth/AdminRoute";
 import AdminPage from "../pages/AdminPage";
 import AboutPage from "../pages/AboutPage";
 import FavoritesPage from "../pages/FavoritesPage";
+import ProfilePage from "../pages/ProfilePage";
 
 function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ function AppRoutes() {
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/explore/:id" element={<ExploreDetailPage />} />
         <Route path="/a-propos" element={<AboutPage />} />
+        <Route path="/users/:id" element={<ProfilePage />} />
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

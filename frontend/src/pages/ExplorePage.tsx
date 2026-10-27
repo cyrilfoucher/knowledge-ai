@@ -4,7 +4,7 @@ import api from "../api/axios";
 import type { ExploreResponse } from "../types/knowledge";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
@@ -25,6 +25,7 @@ function ExplorePage() {
   const sort = searchParams.get("sort") ?? "recent";
   const category = searchParams.get("category") ?? "";
   const tag = searchParams.get("tag") ?? "";
+  const navigate = useNavigate();
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -103,8 +104,19 @@ function ExplorePage() {
                   <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
                   <div className="mt-3 flex items-center justify-between gap-4">
                     <p className="text-muted text-xs">
-                      Par {knowledge.author.name} · Modifiée le{" "}
-                      {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
+                      Par{" "}
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          navigate(`/users/${knowledge.authorId}`);
+                        }}
+                        className="cursor-pointer font-medium text-link hover:underline"
+                      >
+                        {knowledge.author.name}
+                      </button>{" "}
+                      · Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
                     </p>
                     <LikeButton
                       knowledgeId={knowledge.id}

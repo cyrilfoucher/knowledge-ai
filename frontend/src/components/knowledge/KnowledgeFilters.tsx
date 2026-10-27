@@ -66,6 +66,7 @@ function KnowledgeFilters({ q, onChange, sort, category, tag }: KnowledgeFilters
           <option value="recent">Plus récentes</option>
           <option value="oldest">Plus anciennes</option>
           <option value="title">Titre (A → Z)</option>
+          <option value="popular">Plus aimées</option>
         </select>
       </form>
       {tag && (

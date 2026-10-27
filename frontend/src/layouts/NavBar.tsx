@@ -102,6 +102,13 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
                     Mon compte
                   </NavLink>
                   <NavLink
+                    to={`/users/${user?.id}`}
+                    onClick={closeMenus}
+                    className="block px-4 py-2 text-sm hover:bg-bg"
+                  >
+                    Mon profil public
+                  </NavLink>
+                  <NavLink
                     to="/favorites"
                     onClick={closeMenus}
                     className="block px-4 py-2 text-sm hover:bg-bg"
@@ -165,6 +172,9 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
               )}
               <NavLink to="/account" onClick={closeMenus} className={mobileLink}>
                 Mon compte
+              </NavLink>
+              <NavLink to={`/users/${user?.id}`} onClick={closeMenus} className={mobileLink}>
+                Mon profil public
               </NavLink>
             </>
           ) : (
