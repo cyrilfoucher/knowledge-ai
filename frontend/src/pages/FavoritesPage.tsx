@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import type { ExploreResponse } from "../types/knowledge";
 import { useAuth } from "../hooks/useAuth";
 import PageHeader from "../layouts/PageHeader";
 import Alert from "../components/ui/Alert";
-import Card from "../components/ui/Card";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
-import KnowledgeTags from "../components/knowledge/KnowledgeTags";
-import FavoriteButton from "../components/knowledge/FavoriteButton";
-import LikeButton from "../components/knowledge/LikeButton";
+import KnowledgeCard from "../components/knowledge/KnowledgeCard";
 
 function FavoritesPage() {
   const [loading, setLoading] = useState(true);
@@ -20,7 +17,6 @@ function FavoritesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
-  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -79,51 +75,15 @@ function FavoritesPage() {
         <ul className="space-y-4">
           {favorites.knowledges.map((knowledge) => (
             <li key={knowledge.id}>
-              <Link
+              <KnowledgeCard
+                knowledge={knowledge}
                 to={
                   knowledge.authorId === user?.id
                     ? `/knowledge/${knowledge.id}`
                     : `/explore/${knowledge.id}`
                 }
-                className="block hover:opacity-80"
-              >
-                <Card>
-                  <div className="flex items-start justify-between gap-4">
-                    <h2 className="text-lg font-semibold text-heading min-w-0 wrap-break-word">
-                      {knowledge.title}
-                    </h2>
-                    <FavoriteButton knowledgeId={knowledge.id} compact />
-                  </div>
-                  <div className="mt-2">
-                    <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
-                  </div>
-                  <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
-                  <div className="mt-3 flex items-center justify-between gap-4">
-                    <p className="text-muted text-xs">
-                      Par{" "}
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          navigate(`/users/${knowledge.authorId}`);
-                        }}
-                        className="cursor-pointer font-medium text-link hover:underline"
-                      >
-                        {knowledge.author.name}
-                      </button>{" "}
-                      · Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
-                    </p>
-                    {knowledge.visibility === "PUBLIC" && (
-                      <LikeButton
-                        knowledgeId={knowledge.id}
-                        initialCount={knowledge._count.likes}
-                        canLike={knowledge.authorId !== user?.id}
-                      />
-                    )}
-                  </div>
-                </Card>
-              </Link>
+                showAuthor
+              />
             </li>
           ))}
         </ul>

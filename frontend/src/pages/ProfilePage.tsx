@@ -13,6 +13,7 @@ import LikeButton from "../components/knowledge/LikeButton";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import { ArrowLeft } from "lucide-react";
+import KnowledgeCard from "../components/knowledge/KnowledgeCard";
 
 function ProfilePage() {
   const { id } = useParams();
@@ -141,35 +142,11 @@ function ProfilePage() {
         <ul className="space-y-4">
           {list.knowledges.map((knowledge) => (
             <li key={knowledge.id}>
-              <Link to={`/explore/${knowledge.id}`} className="block hover:opacity-80">
-                <Card>
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-lg font-semibold text-heading min-w-0 wrap-break-word">
-                      {knowledge.title}
-                    </h3>
-                    {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} compact />}
-                  </div>
-                  <div className="mt-2">
-                    <KnowledgeTags
-                      category={knowledge.category}
-                      tags={knowledge.tags}
-                      max={3}
-                      onTagClick={(name) => updateParams({ tag: name, page: "" })}
-                    />
-                  </div>
-                  <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
-                  <div className="mt-3 flex items-center justify-between gap-4">
-                    <p className="text-muted text-xs">
-                      Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
-                    </p>
-                    <LikeButton
-                      knowledgeId={knowledge.id}
-                      initialCount={knowledge._count.likes}
-                      canLike={isAuthenticated && knowledge.authorId !== user?.id}
-                    />
-                  </div>
-                </Card>
-              </Link>
+              <KnowledgeCard
+                knowledge={knowledge}
+                to={`/explore/${knowledge.id}`}
+                onTagClick={(name) => updateParams({ tag: name, page: "" })}
+              />
             </li>
           ))}
         </ul>

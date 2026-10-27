@@ -3,15 +3,12 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import type { Knowledge, MyKnowledgesResponse } from "../types/knowledge";
 import Alert from "../components/ui/Alert";
-import Card from "../components/ui/Card";
 import { Link, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
-import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import KnowledgeFilters from "../components/knowledge/KnowledgeFilters";
-import FavoriteButton from "../components/knowledge/FavoriteButton";
-import LikeButton from "../components/knowledge/LikeButton";
+import KnowledgeCard from "../components/knowledge/KnowledgeCard";
 
 function KnowledgePage() {
   const [knowledges, setKnowledges] = useState<Knowledge[]>([]);
@@ -87,42 +84,12 @@ function KnowledgePage() {
         <ul className="space-y-4">
           {knowledges.map((knowledge) => (
             <li key={knowledge.id}>
-              <Link to={`/knowledge/${knowledge.id}`} className="block hover:opacity-80">
-                <Card>
-                  <div className="flex items-start justify-between gap-4">
-                    <h2 className="text-lg font-semibold text-heading min-w-0 wrap-break-word">
-                      {knowledge.title}
-                    </h2>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
-                        {knowledge.visibility === "PUBLIC" ? "Publique" : "Privée"}
-                      </span>
-                      <FavoriteButton knowledgeId={knowledge.id} compact />
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <KnowledgeTags
-                      category={knowledge.category}
-                      tags={knowledge.tags}
-                      max={3}
-                      onTagClick={(name) => updateParams({ tag: name, page: "" })}
-                    />
-                  </div>
-                  <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
-                  <div className="mt-3 flex items-center justify-between gap-4">
-                    <p className="text-muted text-xs">
-                      Modifiée le {new Date(knowledge.updatedAt).toLocaleDateString("fr-FR")}
-                    </p>
-                    {knowledge.visibility === "PUBLIC" && (
-                      <LikeButton
-                        knowledgeId={knowledge.id}
-                        initialCount={knowledge._count.likes}
-                        canLike={false}
-                      />
-                    )}
-                  </div>
-                </Card>
-              </Link>
+              <KnowledgeCard
+                knowledge={knowledge}
+                to={`/knowledge/${knowledge.id}`}
+                showVisibility
+                onTagClick={(name) => updateParams({ tag: name, page: "" })}
+              />
             </li>
           ))}
         </ul>
