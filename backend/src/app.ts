@@ -9,6 +9,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import likeRoutes from "./routes/likeRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 app.use(
@@ -26,6 +27,7 @@ app.use("/categories", categoryRoutes);
 app.use("/admin", adminRoutes);
 app.use("/favorites", favoriteRoutes);
 app.use("/likes", likeRoutes);
+app.use("/users", userRoutes);
 app.use(ErrorMiddleware);
 
 export default app;

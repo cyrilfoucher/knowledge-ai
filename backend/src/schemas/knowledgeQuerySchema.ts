@@ -8,6 +8,7 @@ export const KnowledgeQuerySchema = PaginationQuerySchema.extend({
     .max(100, "Un maximum de 100 caractères est autorisé")
     .optional(),
   category: z.uuid().optional(),
+  author: z.uuid().optional(),
   tag: z
     .string()
     .trim()

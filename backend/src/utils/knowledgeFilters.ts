@@ -5,6 +5,7 @@ export function buildKnowledgeFilters({
   q,
   category,
   tag,
+  author,
 }: KnowledgeQueryInput): Prisma.KnowledgeWhereInput {
   const where: Prisma.KnowledgeWhereInput = {};
   if (category) {
@@ -18,6 +19,9 @@ export function buildKnowledgeFilters({
   }
   if (tag) {
     where.tags = { some: { name: tag } };
+  }
+  if (author) {
+    where.authorId = author;
   }
   return where;
 }
