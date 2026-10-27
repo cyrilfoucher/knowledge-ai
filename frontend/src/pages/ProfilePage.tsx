@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import type { PublicProfile } from "../types/profile";
 import Card from "../components/ui/Card";
 import Alert from "../components/ui/Alert";
 import type { ExploreResponse } from "../types/knowledge";
-import { useAuth } from "../hooks/useAuth";
 import KnowledgeFilters from "../components/knowledge/KnowledgeFilters";
-import KnowledgeTags from "../components/knowledge/KnowledgeTags";
-import FavoriteButton from "../components/knowledge/FavoriteButton";
-import LikeButton from "../components/knowledge/LikeButton";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
 import { ArrowLeft } from "lucide-react";
@@ -23,7 +19,6 @@ function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [list, setList] = useState<ExploreResponse | null>(null);
   const [listLoading, setListLoading] = useState(true);
-  const { user, isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
