@@ -53,7 +53,7 @@ export async function summarizeText(
     },
     { role: "user", content: `Titre : ${title}\n\n${content}` },
   ]);
-  return summary.replaceAll("**", "").replaceAll("`", "");
+  return summary.replace(/[*`#]/g, "").trim();
 }
 
 export async function suggestTags(
