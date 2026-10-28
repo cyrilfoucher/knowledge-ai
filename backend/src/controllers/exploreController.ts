@@ -10,7 +10,10 @@ export async function getPublicKnowledgesController(
   res: Response,
 ) {
   const query = KnowledgeQuerySchema.parse(req.query);
-  const { knowledges, total } = await getPublicKnowledges(query);
+  const { knowledges, total } = await getPublicKnowledges(
+    query,
+    req.user?.userId,
+  );
   const totalPages = Math.ceil(total / query.limit);
   return res.json({
     page: query.page,
@@ -25,6 +28,9 @@ export async function getPublicKnowledgeByIdController(
   req: Request<{ id: string }>,
   res: Response,
 ) {
-  const knowledge = await getPublicKnowledgeById(req.params.id);
+  const knowledge = await getPublicKnowledgeById(
+    req.params.id,
+    req.user?.userId,
+  );
   res.json({ knowledge });
 }

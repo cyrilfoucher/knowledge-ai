@@ -1,5 +1,6 @@
 import AppError from "../errors/AppError.js";
 import { prisma } from "../lib/prisma.js";
+import { addUserState } from "./userStateService.js";
 
 export async function addFavorite(userId: string, knowledgeId: string) {
   const existsKnowledge = await prisma.knowledge.findFirst({
@@ -64,8 +65,6 @@ export async function getFavorites(
     prisma.favorite.count({ where }),
   ]);
 
-  return {
-    knowledges: favorites.map((favorite) => favorite.knowledge),
-    total,
-  };
+  const knowledges = favorites.map((favorite) => favorite.knowledge);
+  return { knowledges: await addUserState(knowledges, userId), total };
 }

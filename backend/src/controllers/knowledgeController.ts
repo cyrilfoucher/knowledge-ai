@@ -9,10 +9,10 @@ import AppError from "../errors/AppError.js";
 import {
   createKnowledge,
   getMyKnowledges,
-  getKnowledgeById,
   updateKnowledgeById,
   deleteKnowledgeById,
   generateKnowledgeSummary,
+  getKnowledgeDetail,
 } from "../services/knowledgeService.js";
 import { KnowledgeQuerySchema } from "../schemas/knowledgeQuerySchema.js";
 import { suggestTags } from "../services/aiService.js";
@@ -49,7 +49,7 @@ export async function getKnowledgeByIdController(
   if (!req.user) {
     throw new AppError("Aucun utilisateur trouvé", 401);
   }
-  const knowledge = await getKnowledgeById(req.params.id, req.user);
+  const knowledge = await getKnowledgeDetail(req.params.id, req.user);
   return res.status(200).json({ knowledge });
 }
 

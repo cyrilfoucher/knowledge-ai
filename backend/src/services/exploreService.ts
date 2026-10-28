@@ -6,8 +6,12 @@ import {
 } from "../utils/knowledgeFilters.js";
 import type { KnowledgeQueryInput } from "../schemas/knowledgeQuerySchema.js";
 import type { Prisma } from "../generated/prisma/client.js";
+import { addUserState } from "./userStateService.js";
 
-export async function getPublicKnowledges(query: KnowledgeQueryInput) {
+export async function getPublicKnowledges(
+  query: KnowledgeQueryInput,
+  userId?: string,
+) {
   const where: Prisma.KnowledgeWhereInput = {
     ...buildKnowledgeFilters(query),
     visibility: "PUBLIC",
@@ -29,10 +33,10 @@ export async function getPublicKnowledges(query: KnowledgeQueryInput) {
       where: where,
     }),
   ]);
-  return { knowledges, total };
+  return { knowledges: await addUserState(knowledges, userId), total };
 }
 
-export async function getPublicKnowledgeById(id: string) {
+export async function getPublicKnowledgeById(id: string, userId?: string) {
   const knowledge = await prisma.knowledge.findFirst({
     where: { visibility: "PUBLIC", id: id },
     include: {
@@ -45,5 +49,6 @@ export async function getPublicKnowledgeById(id: string) {
   if (!knowledge) {
     throw new AppError("Fiche de connaissance introuvable", 404);
   }
-  return knowledge;
+  const [knowledgeWithState] = await addUserState([knowledge], userId);
+  return knowledgeWithState;
 }

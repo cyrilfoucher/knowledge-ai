@@ -13,6 +13,7 @@ import {
   buildKnowledgeOrderBy,
 } from "../utils/knowledgeFilters.js";
 import { summarizeText } from "./aiService.js";
+import { addUserState } from "./userStateService.js";
 
 export async function createKnowledge(
   authorId: string,
@@ -82,7 +83,7 @@ export async function getMyKnowledges(
       where: where,
     }),
   ]);
-  return { knowledges, total };
+  return { knowledges: await addUserState(knowledges, authorId), total };
 }
 
 export async function getKnowledgeById(id: string, user: TokenPayload) {
@@ -103,6 +104,12 @@ export async function getKnowledgeById(id: string, user: TokenPayload) {
     throw new AppError("Connaissance introuvable", 404);
   }
   return knowledge;
+}
+
+export async function getKnowledgeDetail(id: string, user: TokenPayload) {
+  const knowledge = await getKnowledgeById(id, user);
+  const [knowledgeWithState] = await addUserState([knowledge], user.userId);
+  return knowledgeWithState;
 }
 
 function canManageKnowledge(authorId: string, user: TokenPayload) {
@@ -202,7 +209,12 @@ export async function generateKnowledgeSummary(id: string, user: TokenPayload) {
     include: {
       category: { select: { id: true, name: true } },
       tags: { select: { id: true, name: true } },
+      _count: { select: { likes: true } },
     },
   });
-  return knowledgeSummary;
+  const [knowledgeWithState] = await addUserState(
+    [knowledgeSummary],
+    user.userId,
+  );
+  return knowledgeWithState;
 }
