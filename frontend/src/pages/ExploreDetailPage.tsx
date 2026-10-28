@@ -88,8 +88,11 @@ function ExploreKnowledgeDetailPage() {
               knowledgeId={knowledge.id}
               initialCount={knowledge._count.likes}
               canLike={canLike}
+              initialLiked={knowledge.liked}
             />
-            {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} />}
+            {isAuthenticated && (
+              <FavoriteButton knowledgeId={knowledge.id} initialIsFavorite={knowledge.isFavorite} />
+            )}
           </div>
         </div>
         <div className="mt-2">

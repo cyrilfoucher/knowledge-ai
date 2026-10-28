@@ -1,6 +1,6 @@
 import Button from "../ui/Button";
 import api from "../../api/axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
@@ -9,29 +9,13 @@ interface LikeButtonProps {
   knowledgeId: string;
   initialCount: number;
   canLike: boolean;
+  initialLiked: boolean;
 }
 
-function LikeButton({ knowledgeId, initialCount, canLike }: LikeButtonProps) {
-  const [liked, setLiked] = useState(false);
-  const [loading, setLoading] = useState(canLike);
+function LikeButton({ knowledgeId, initialCount, canLike, initialLiked }: LikeButtonProps) {
+  const [liked, setLiked] = useState(initialLiked);
+  const [loading, setLoading] = useState(false);
   const [count, setCount] = useState(initialCount);
-  useEffect(() => {
-    if (!canLike) {
-      return;
-    }
-    async function loadingLike() {
-      try {
-        setLoading(true);
-        const response = await api.get<{ liked: boolean }>(`/likes/${knowledgeId}`);
-        setLiked(response.data.liked);
-      } catch {
-        // le catch est vide pour garder le bouton like en place même en cas d'erreur
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadingLike();
-  }, [knowledgeId, canLike]);
   async function handleToggle(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();

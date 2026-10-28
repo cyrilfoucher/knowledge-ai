@@ -91,9 +91,10 @@ function KnowledgeDetailPage() {
                 knowledgeId={knowledge.id}
                 initialCount={knowledge._count.likes}
                 canLike={false}
+                initialLiked={knowledge.liked}
               />
             )}
-            <FavoriteButton knowledgeId={knowledge.id} />
+            <FavoriteButton knowledgeId={knowledge.id} initialIsFavorite={knowledge.isFavorite} />
           </div>
         </div>
         <div className="mt-2">

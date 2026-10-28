@@ -1,5 +1,5 @@
 import api from "../../api/axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import { Heart } from "lucide-react";
@@ -7,24 +7,12 @@ import { Heart } from "lucide-react";
 interface FavoriteProps {
   knowledgeId: string;
   compact?: boolean;
+  initialIsFavorite: boolean;
 }
 
-function FavoriteButton({ knowledgeId, compact }: FavoriteProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function loadFavorites() {
-      try {
-        const response = await api.get<{ isFavorite: boolean }>(`/favorites/${knowledgeId}`);
-        setIsFavorite(response.data.isFavorite);
-      } catch {
-        //En cas d'echec de l'appel le bouton reste sur "Ajouter aux favoris"
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadFavorites();
-  }, [knowledgeId]);
+function FavoriteButton({ knowledgeId, compact, initialIsFavorite }: FavoriteProps) {
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [loading, setLoading] = useState(false);
   async function handleToggle(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();

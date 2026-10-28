@@ -14,6 +14,8 @@ export interface Knowledge {
   tags: Tag[];
   summary: string | null;
   _count: { likes: number };
+  isFavorite: boolean;
+  liked: boolean;
 }
 
 export type PublicKnowledge = Knowledge & { author: { name: string } };

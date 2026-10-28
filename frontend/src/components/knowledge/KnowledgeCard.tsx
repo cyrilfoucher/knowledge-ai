@@ -37,7 +37,13 @@ function KnowledgeCard({
                 {knowledge.visibility === "PUBLIC" ? "Publique" : "Privée"}
               </span>
             )}
-            {isAuthenticated && <FavoriteButton knowledgeId={knowledge.id} compact />}
+            {isAuthenticated && (
+              <FavoriteButton
+                knowledgeId={knowledge.id}
+                initialIsFavorite={knowledge.isFavorite}
+                compact
+              />
+            )}
           </div>
         </div>
         <div className="mt-2">
@@ -74,6 +80,7 @@ function KnowledgeCard({
             <LikeButton
               knowledgeId={knowledge.id}
               initialCount={knowledge._count.likes}
+              initialLiked={knowledge.liked}
               canLike={canLike}
             />
           )}
