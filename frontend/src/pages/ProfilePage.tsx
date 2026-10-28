@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import type { PublicProfile } from "../types/profile";
 import Card from "../components/ui/Card";
@@ -8,12 +8,11 @@ import type { ExploreResponse } from "../types/knowledge";
 import KnowledgeFilters from "../components/knowledge/KnowledgeFilters";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelect from "../components/ui/PageSizeSelect";
-import { ArrowLeft } from "lucide-react";
 import KnowledgeCard from "../components/knowledge/KnowledgeCard";
+import BackButton from "../components/ui/BackButton";
 
 function ProfilePage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,13 +65,6 @@ function ProfilePage() {
     }
     loadList();
   }, [id, searchParams]);
-  function handleBack() {
-    if (window.history.state?.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate("/explore");
-    }
-  }
   function renderHeader() {
     if (loading) {
       return <p className="text-muted">Chargement en cours...</p>;
@@ -155,14 +147,7 @@ function ProfilePage() {
   }
   return (
     <>
-      <button
-        type="button"
-        onClick={handleBack}
-        className="mb-4 inline-flex cursor-pointer items-center gap-1 text-sm text-muted hover:text-text"
-      >
-        <ArrowLeft size={16} />
-        Retour
-      </button>
+      <BackButton fallback="/explore" />
       {renderHeader()}
       {profile && (
         <section className="mt-8">

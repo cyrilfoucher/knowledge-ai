@@ -6,12 +6,13 @@ import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import type { Knowledge } from "../types/knowledge";
-import { ArrowLeft, Trash2, Pencil, Sparkles } from "lucide-react";
+import { Trash2, Pencil, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import { isAxiosError } from "axios";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
 import LikeButton from "../components/knowledge/LikeButton";
+import BackButton from "../components/ui/BackButton";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
@@ -148,13 +149,7 @@ function KnowledgeDetailPage() {
   }
   return (
     <>
-      <Link
-        to="/knowledge"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-muted hover:text-text"
-      >
-        <ArrowLeft size={16} />
-        Mes connaissances
-      </Link>
+      <BackButton fallback="/knowledge" />
       <PageHeader title="Détails" />
       {renderContent()}
     </>

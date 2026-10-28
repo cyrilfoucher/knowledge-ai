@@ -7,13 +7,14 @@ import Card from "../components/ui/Card";
 import type { PublicKnowledge } from "../types/knowledge";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../components/ui/Button";
-import { ArrowLeft, EyeOff, Trash2, Sparkles } from "lucide-react";
+import { EyeOff, Trash2, Sparkles } from "lucide-react";
 import Textarea from "../components/ui/Textarea";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
 import LikeButton from "../components/knowledge/LikeButton";
+import BackButton from "../components/ui/BackButton";
 
 function ExploreKnowledgeDetailPage() {
   const { id } = useParams();
@@ -170,13 +171,7 @@ function ExploreKnowledgeDetailPage() {
   }
   return (
     <>
-      <Link
-        to="/explore"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-muted hover:text-text"
-      >
-        <ArrowLeft size={16} />
-        Retour à la liste
-      </Link>
+      <BackButton fallback="/explore" />
       <PageHeader title="Détails" />
       {renderContent()}
     </>
