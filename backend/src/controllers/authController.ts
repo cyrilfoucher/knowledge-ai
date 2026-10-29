@@ -45,14 +45,22 @@ export async function loginController(req: Request, res: Response) {
   res.status(200).json({ user });
 }
 
-export async function demoLoginController(req: Request, res: Response) {
-  const user = await loginDemoUser();
+async function startDemoSession(res: Response, kind: "user" | "admin") {
+  const user = await loginDemoUser(kind);
   const token = signToken({ userId: user.id, role: user.role });
   res.cookie("token", token, {
     ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({ user });
+}
+
+export async function demoLoginController(_req: Request, res: Response) {
+  await startDemoSession(res, "user");
+}
+
+export async function demoAdminLoginController(_req: Request, res: Response) {
+  await startDemoSession(res, "admin");
 }
 
 export async function meController(req: Request, res: Response) {

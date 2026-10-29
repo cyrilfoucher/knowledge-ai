@@ -9,6 +9,7 @@ import {
   forgotPasswordController,
   resetPasswordController,
   demoLoginController,
+  demoAdminLoginController,
 } from "../controllers/authController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -17,6 +18,7 @@ const router = Router();
 router.post("/register", registerController);
 router.post("/login", loginController);
 router.post("/demo", demoLoginController);
+router.post("/demo-admin", demoAdminLoginController);
 router.get("/me", authMiddleware, meController);
 router.post("/logout", logoutController);
 router.patch("/me", authMiddleware, updateMeController);

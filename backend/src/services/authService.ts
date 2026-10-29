@@ -217,8 +217,9 @@ export async function resetPassword(data: ResetPasswordInput) {
   });
 }
 
-export async function loginDemoUser() {
-  const demoEmail = process.env.DEMO_EMAIL;
+export async function loginDemoUser(kind: "user" | "admin" = "user") {
+  const demoEmail =
+    kind === "admin" ? process.env.DEMO_ADMIN_EMAIL : process.env.DEMO_EMAIL;
   if (!demoEmail) {
     throw new AppError("Compte de démonstration indisponible", 503);
   }

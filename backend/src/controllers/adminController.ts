@@ -7,6 +7,8 @@ import {
   getUsers,
 } from "../services/adminService.js";
 import { PaginationQuerySchema } from "../schemas/paginationSchema.js";
+import { isDemoUser } from "../utils/demo.js";
+import AppError from "../errors/AppError.js";
 
 export async function unpublishKnowledgeController(
   req: Request<{ id: string }>,
@@ -34,8 +36,12 @@ export async function getAdminStatsController(req: Request, res: Response) {
 }
 
 export async function getUsersController(req: Request, res: Response) {
+  if (!req.user) {
+    throw new AppError("Aucun utilisateur", 401);
+  }
+  const hideEmails = await isDemoUser(req.user.userId);
   const { page, limit } = PaginationQuerySchema.parse(req.query);
-  const { users, total } = await getUsers(page, limit);
+  const { users, total } = await getUsers(page, limit, hideEmails);
   const totalPages = Math.ceil(total / limit);
   return res.json({ users, total, page, limit, totalPages });
 }

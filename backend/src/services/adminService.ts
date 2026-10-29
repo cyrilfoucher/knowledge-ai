@@ -5,6 +5,7 @@ import {
   deletedKnowledgeEmail,
   unpublishedKnowledgeEmail,
 } from "../utils/emailTemplates.js";
+import { maskEmail } from "../utils/maskEmail.js";
 
 export async function unpublishKnowledge(id: string, reason: string) {
   const knowledge = await prisma.knowledge.findFirst({
@@ -68,7 +69,11 @@ export async function getAdminStats() {
   return { users, knowledges, publicKnowledges };
 }
 
-export async function getUsers(page: number, limit: number) {
+export async function getUsers(
+  page: number,
+  limit: number,
+  hideEmails: boolean,
+) {
   const [users, total] = await Promise.all([
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
@@ -85,5 +90,11 @@ export async function getUsers(page: number, limit: number) {
     }),
     prisma.user.count(),
   ]);
+  if (hideEmails) {
+    return {
+      users: users.map((user) => ({ ...user, email: maskEmail(user.email) })),
+      total,
+    };
+  }
   return { users, total };
 }

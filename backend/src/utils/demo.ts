@@ -1,7 +1,9 @@
 import { prisma } from "../lib/prisma.js";
 
 export function isDemoEmail(email: string) {
-  return email === process.env.DEMO_EMAIL;
+  return (
+    email === process.env.DEMO_EMAIL || email === process.env.DEMO_ADMIN_EMAIL
+  );
 }
 
 export async function isDemoUser(userId: string) {
