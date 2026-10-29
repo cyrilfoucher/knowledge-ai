@@ -21,6 +21,9 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
 app.use("/auth", authRoutes);
 app.use("/knowledges", knowledgesRoutes);
 app.use("/explore", exploreRoute);
