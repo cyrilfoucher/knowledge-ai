@@ -3,9 +3,11 @@ import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useTheme } from "../hooks/useTheme";
+import { useServerWakeUp } from "../hooks/useServerWakeUp";
 
 function MainLayout() {
   const { theme, ChangeTheme } = useTheme();
+  useServerWakeUp();
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar theme={theme} onToggleTheme={ChangeTheme} />
