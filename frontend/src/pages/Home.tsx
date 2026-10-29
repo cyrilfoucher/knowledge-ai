@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 
 function Home() {
-  const { isAuthenticated, loginDemo } = useAuth();
+  const { isAuthenticated, loginDemo, loginDemoAdmin } = useAuth();
   const navigate = useNavigate();
-  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<"user" | "admin" | null>(null);
   const [latest, setLatest] = useState<PublicKnowledge[]>([]);
 
   useEffect(() => {
@@ -25,15 +25,20 @@ function Home() {
     loadLatest();
   }, []);
 
-  async function handleDemo() {
+  async function handleDemo(kind: "user" | "admin") {
     try {
-      setDemoLoading(true);
-      await loginDemo();
-      navigate("/knowledge");
+      setDemoLoading(kind);
+      if (kind === "admin") {
+        await loginDemoAdmin();
+        navigate("/admin");
+      } else {
+        await loginDemo();
+        navigate("/knowledge");
+      }
     } catch {
       toast.error("Le compte de démonstration est indisponible pour le moment.");
     } finally {
-      setDemoLoading(false);
+      setDemoLoading(null);
     }
   }
   return (
@@ -67,11 +72,19 @@ function Home() {
               </Link>
               <Button
                 variant="secondary"
-                onClick={handleDemo}
-                disabled={demoLoading}
-                className="px-5 py-2.5 text-base! rounded-lg"
+                onClick={() => handleDemo("user")}
+                disabled={demoLoading !== null}
+                className="px-5 py-2.5 text-base rounded-lg"
               >
-                {demoLoading ? "Connexion…" : "Essayer la démo"}
+                {demoLoading === "user" ? "Connexion…" : "Essayer la démo"}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleDemo("admin")}
+                disabled={demoLoading !== null}
+                className="px-5 py-2.5 text-base rounded-lg"
+              >
+                {demoLoading === "admin" ? "Connexion…" : "Essayer en admin"}
               </Button>
             </>
           )}

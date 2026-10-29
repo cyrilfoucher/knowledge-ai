@@ -12,6 +12,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateProfile: (name: string, email: string) => Promise<void>;
   loginDemo: () => Promise<Utilisateur>;
+  loginDemoAdmin: () => Promise<Utilisateur>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(response.data.user);
     return response.data.user;
   };
+  const loginDemoAdmin = async () => {
+    const response = await api.post<{ user: Utilisateur }>("/auth/demo-admin");
+    setUser(response.data.user);
+    return response.data.user;
+  };
+
   const signUp = async (name: string, email: string, password: string) => {
     await api.post("/auth/register", { name, email, password });
     return login(email, password);
@@ -60,7 +67,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, loading, login, signUp, logout, updateProfile, loginDemo }}
+      value={{
+        user,
+        isAuthenticated,
+        loading,
+        login,
+        signUp,
+        logout,
+        updateProfile,
+        loginDemo,
+        loginDemoAdmin,
+      }}
     >
       {children}
     </AuthContext.Provider>
