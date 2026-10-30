@@ -65,7 +65,7 @@ export async function demoAdminLoginController(_req: Request, res: Response) {
 
 export async function meController(req: Request, res: Response) {
   if (!req.user) {
-    throw new AppError("Vous devez être connecté", 401);
+    throw new AppError("Tu dois être connecté", 401);
   }
   const user = await getCurrentUser(req.user.userId);
   res.status(200).json({ user });
@@ -80,7 +80,7 @@ export function logoutController(req: Request, res: Response) {
 
 export async function updateMeController(req: Request, res: Response) {
   if (!req.user) {
-    throw new AppError("Vous devez être connecté", 401);
+    throw new AppError("Tu dois être connecté", 401);
   }
   const data = UpdateProfileSchema.parse(req.body);
   const user = await updateCurrentUser(req.user.userId, data);
@@ -91,7 +91,7 @@ export async function updateMeController(req: Request, res: Response) {
 
 export async function updatePasswordController(req: Request, res: Response) {
   if (!req.user) {
-    throw new AppError("Vous devez être connecté", 401);
+    throw new AppError("Tu dois être connecté", 401);
   }
   const data = UpdatePasswordSchema.parse(req.body);
   await updatePassword(req.user.userId, data);

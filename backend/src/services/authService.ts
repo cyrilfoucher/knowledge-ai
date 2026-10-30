@@ -185,7 +185,7 @@ export async function forgotPassword(data: ForgotPasswordInput) {
   const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
   await sendEmail({
     to: user.email,
-    subject: "Réinitialisation de votre mot de passe",
+    subject: "Réinitialisation de ton mot de passe",
     html: resetPasswordEmail(resetLink),
   });
 }

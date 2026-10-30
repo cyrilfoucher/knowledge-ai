@@ -125,7 +125,7 @@ export async function updateKnowledgeById(
   const canEdit = canManageKnowledge(knowledge.authorId, user);
   if (!canEdit) {
     throw new AppError(
-      "Vous n'avez pas le droit de modifier cette connaissance",
+      "Tu n'as pas le droit de modifier cette connaissance",
       403,
     );
   }
@@ -181,7 +181,7 @@ export async function deleteKnowledgeById(id: string, user: TokenPayload) {
   const canDelete = canManageKnowledge(knowledge.authorId, user);
   if (!canDelete) {
     throw new AppError(
-      "Vous n'avez pas le droit de supprimer cette connaissance",
+      "Tu n'as pas le droit de supprimer cette connaissance",
       403,
     );
   }
@@ -200,7 +200,7 @@ export async function generateKnowledgeSummary(id: string, user: TokenPayload) {
   const knowledge = await getKnowledgeById(id, user);
   const canEdit = canManageKnowledge(knowledge.authorId, user);
   if (!canEdit) {
-    throw new AppError("Vous n'avez pas le droit de résumer cette fiche", 403);
+    throw new AppError("Tu n'as pas le droit de résumer cette fiche", 403);
   }
   const summary = await summarizeText(knowledge.title, knowledge.content);
   const knowledgeSummary = await prisma.knowledge.update({

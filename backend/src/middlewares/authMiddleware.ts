@@ -5,7 +5,7 @@ import type { Request, Response, NextFunction } from "express";
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies.token;
   if (!token) {
-    throw new AppError("Vous devez être connecté", 401);
+    throw new AppError("Tu dois être connecté", 401);
   }
   try {
     req.user = verifyToken(token);
