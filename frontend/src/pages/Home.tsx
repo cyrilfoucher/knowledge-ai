@@ -8,6 +8,7 @@ import { NotebookPen, Share2, Bot } from "lucide-react";
 import Button from "../components/ui/Button";
 import { toast } from "sonner";
 import KnowledgeTags from "../components/knowledge/KnowledgeTags";
+import { stripMarkdown } from "../utils/stripMarkdown";
 
 function Home() {
   const { isAuthenticated, loginDemo, loginDemoAdmin } = useAuth();
@@ -105,7 +106,9 @@ function Home() {
                   <div className="mt-2">
                     <KnowledgeTags category={knowledge.category} tags={knowledge.tags} max={3} />
                   </div>
-                  <p className="mt-2 text-sm text-muted line-clamp-3">{knowledge.content}</p>
+                  <p className="mt-2 text-sm text-muted line-clamp-3">
+                    {stripMarkdown(knowledge.content)}
+                  </p>
                   <p className="mt-auto pt-3 text-xs text-muted">Par {knowledge.author.name}</p>
                 </Card>
               </Link>

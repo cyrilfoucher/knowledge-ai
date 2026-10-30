@@ -105,14 +105,20 @@ function KnowledgeForm({ defaultValues, submitLabel, onSubmit }: KnowledgeFormPr
         error={errors.title?.message}
         {...register("title")}
       />
-      <Textarea
-        label="Contenu"
-        id="content"
-        placeholder="Saisis ton texte"
-        error={errors.content?.message}
-        {...register("content")}
-        rows={10}
-      />
+      <div>
+        <Textarea
+          label="Contenu"
+          id="content"
+          placeholder="Saisis ton texte"
+          error={errors.content?.message}
+          {...register("content")}
+          rows={10}
+        />
+        <p className="mt-1.5 text-xs text-muted">
+          Markdown accepté : <code>## Titre</code>, <code>**gras**</code>, <code>- liste</code>, et{" "}
+          <code>```</code> avant et après un bloc de code.
+        </p>
+      </div>
       <div>
         <label htmlFor="categoryId" className="mb-1.5 block text-sm font-medium">
           Catégorie

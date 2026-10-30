@@ -13,6 +13,7 @@ import { isAxiosError } from "axios";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
 import LikeButton from "../components/knowledge/LikeButton";
 import BackButton from "../components/ui/BackButton";
+import MarkdownContent from "../components/knowledge/MarkdownContent";
 
 function KnowledgeDetailPage() {
   const { id } = useParams();
@@ -109,7 +110,9 @@ function KnowledgeDetailPage() {
             <p className="whitespace-pre-line text-sm">{knowledge.summary}</p>
           </div>
         )}
-        <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
+        <div className="mt-4">
+          <MarkdownContent content={knowledge.content} />
+        </div>
         {deleteError && (
           <Alert variant="danger" className="mt-4">
             {deleteError}

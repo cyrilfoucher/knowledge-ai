@@ -5,6 +5,7 @@ import Card from "../ui/Card";
 import KnowledgeTags from "./KnowledgeTags";
 import FavoriteButton from "./FavoriteButton";
 import LikeButton from "./LikeButton";
+import { stripMarkdown } from "../../utils/stripMarkdown";
 
 interface KnowledgeCardProps {
   knowledge: Knowledge & { author?: { name: string } };
@@ -54,7 +55,7 @@ function KnowledgeCard({
             onTagClick={onTagClick}
           />
         </div>
-        <p className="mt-2 text-muted line-clamp-2">{knowledge.content}</p>
+        <p className="mt-2 text-muted line-clamp-2">{stripMarkdown(knowledge.content)}</p>
         <div className="mt-3 flex items-center justify-between gap-4">
           <p className="text-muted text-xs">
             {showAuthor && knowledge.author && (

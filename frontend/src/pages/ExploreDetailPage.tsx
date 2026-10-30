@@ -15,6 +15,7 @@ import KnowledgeTags from "../components/knowledge/KnowledgeTags";
 import FavoriteButton from "../components/knowledge/FavoriteButton";
 import LikeButton from "../components/knowledge/LikeButton";
 import BackButton from "../components/ui/BackButton";
+import MarkdownContent from "../components/knowledge/MarkdownContent";
 
 function ExploreKnowledgeDetailPage() {
   const { id } = useParams();
@@ -117,7 +118,9 @@ function ExploreKnowledgeDetailPage() {
             <p className="whitespace-pre-line text-sm">{knowledge.summary}</p>
           </div>
         )}
-        <p className="mt-4 whitespace-pre-line">{knowledge.content}</p>
+        <div className="mt-4">
+          <MarkdownContent content={knowledge.content} />
+        </div>
         {isAdmin && (
           <div className="mt-6 flex justify-end gap-3">
             <Button
