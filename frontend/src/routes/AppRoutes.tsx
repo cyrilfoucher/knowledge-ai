@@ -1,25 +1,27 @@
+import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
-import KnowledgePage from "../pages/KnowledgePage";
-import KnowledgeDetailPage from "../pages/KnowledgeDetailPage";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GuestRoute from "../components/auth/GuestRoute";
-import ForgotPassword from "../pages/ForgotPassword";
-import ResetPassword from "../pages/ResetPassword";
-import MyAccount from "../pages/MyAccount";
-import KnowledgeCreatePage from "../pages/KnowledgeCreatePage";
-import KnowledgeEdit from "../pages/KnowledgeEditPage";
-import ExplorePage from "../pages/ExplorePage";
-import ExploreDetailPage from "../pages/ExploreDetailPage";
 import AdminRoute from "../components/auth/AdminRoute";
-import AdminPage from "../pages/AdminPage";
-import AboutPage from "../pages/AboutPage";
-import FavoritesPage from "../pages/FavoritesPage";
-import ProfilePage from "../pages/ProfilePage";
+
+const Login = lazy(() => import("../pages/Login"));
+const Register = lazy(() => import("../pages/Register"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("../pages/ResetPassword"));
+const KnowledgePage = lazy(() => import("../pages/KnowledgePage"));
+const KnowledgeDetailPage = lazy(() => import("../pages/KnowledgeDetailPage"));
+const KnowledgeCreatePage = lazy(() => import("../pages/KnowledgeCreatePage"));
+const KnowledgeEdit = lazy(() => import("../pages/KnowledgeEditPage"));
+const MyAccount = lazy(() => import("../pages/MyAccount"));
+const ExplorePage = lazy(() => import("../pages/ExplorePage"));
+const ExploreDetailPage = lazy(() => import("../pages/ExploreDetailPage"));
+const AdminPage = lazy(() => import("../pages/AdminPage"));
+const AboutPage = lazy(() => import("../pages/AboutPage"));
+const FavoritesPage = lazy(() => import("../pages/FavoritesPage"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 
 function AppRoutes() {
   return (
