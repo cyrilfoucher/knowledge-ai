@@ -15,6 +15,7 @@ import {
 } from "../services/knowledgeService.js";
 import { KnowledgeQuerySchema } from "../schemas/knowledgeQuerySchema.js";
 import { suggestTags } from "../services/aiService.js";
+import { getPopularTagNames } from "../services/tagService.js";
 
 export async function createKnowledgeController(req: Request, res: Response) {
   if (!req.user) {
@@ -91,6 +92,8 @@ export async function suggestTagsController(req: Request, res: Response) {
     throw new AppError("Aucun utilisateur trouvé", 401);
   }
   const data = SuggestTagsSchema.parse(req.body);
-  const tags = await suggestTags(data.title, data.content);
+  const existingTags = await getPopularTagNames(50);
+  console.log("Tags existants :", existingTags);
+  const tags = await suggestTags(data.title, data.content, existingTags);
   return res.status(200).json({ tags });
 }

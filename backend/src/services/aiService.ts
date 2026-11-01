@@ -67,15 +67,19 @@ export async function summarizeText(
 export async function suggestTags(
   title: string,
   content: string,
+  existingTags: string[],
 ): Promise<string[]> {
   const answer = await callMistral(
     [
       {
         role: "system",
         content:
-          'Tu es un assistant qui suggère des tags pour une fiche de connaissances sur le développement web. Propose entre 3 et 5 tags, en commençant par la technologie principale de la fiche. Privilégie des tags d\'un seul mot, généraux et réutilisables sur d\'autres fiches, en français ou en anglais selon l\'usage. Chaque tag ne contient que des lettres minuscules, des chiffres ou un tiret, par exemple react-router. Réponds uniquement en JSON, au format {"tags": ["tag1", "tag2"]}.',
+          'Tu es un assistant qui suggère des tags pour une fiche de connaissances sur le développement web. Propose entre 1 et 4 tags, en commençant par la technologie principale de la fiche. Mieux vaut moins de tags que des tags vagues : arrête-toi quand il n\'y a plus de terme technique pertinent. Réutilise en priorité les tags existants qui conviennent à la fiche. Si tu dois créer un nouveau tag, ce doit être un terme technique précis : une technologie, une fonction ou un concept de développement, par exemple hooks ou usereducer. N\'utilise jamais de mot général comme logique, gestion ou état. Chaque tag est en minuscules et ne contient que des lettres, des chiffres ou un tiret, par exemple react-router. Réponds uniquement en JSON, au format {"tags": ["tag1", "tag2"]}.',
       },
-      { role: "user", content: `Titre : ${title}\n\n${content}` },
+      {
+        role: "user",
+        content: `Titre : ${title}\n\n${content}\n\nTags existants : ${existingTags.join(", ")}`,
+      },
     ],
     true,
   );
