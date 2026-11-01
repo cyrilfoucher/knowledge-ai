@@ -1,11 +1,15 @@
 import AppError from "../errors/AppError.js";
+import { aiTagsSchema } from "../schemas/aiSchema.js";
 
 type AiMessage = {
   role: "system" | "user";
   content: string;
 };
 
-async function callMistral(messages: AiMessage[]): Promise<string> {
+async function callMistral(
+  messages: AiMessage[],
+  json = false,
+): Promise<string> {
   const apiKey = process.env.MISTRAL_API_KEY;
   const model = process.env.AI_MODEL;
   if (!apiKey || !model) {
@@ -18,7 +22,11 @@ async function callMistral(messages: AiMessage[]): Promise<string> {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ model, messages }),
+      body: JSON.stringify({
+        model,
+        messages,
+        response_format: json ? { type: "json_object" } : undefined,
+      }),
       signal: AbortSignal.timeout(15000),
     });
     if (!response.ok) {
@@ -60,18 +68,27 @@ export async function suggestTags(
   title: string,
   content: string,
 ): Promise<string[]> {
-  const answer = await callMistral([
-    {
-      role: "system",
-      content:
-        "Tu es un assistant qui suggère des tags en rapport avec la fiche que tu auras analysée au préalable, tu en proposeras entre 3 et 5, les tags seront suggérés en minuscule,en rapport avec le developpement web,Commence par la technologie principale de la fiche. Privilégie des tags d’un seul mot, généraux et réutilisables sur d’autres fiches. en français ou si c'est l'usage en anglais,un ou deux mot maximum par tag et tu les proposera séparés par des virgules sans phrase,ni numéro ni symbole mais uniquement des lettres minuscules,des chiffres ou un tiret (si le tag comporte deux mot comme react-router)corréspondant au tag, réponds uniquement par la liste de tag sans introduction",
-    },
-    { role: "user", content: `Titre : ${title}\n\n${content}` },
-  ]);
-  const tags = answer
-    .split(/[,\n]/)
-    .map((tag) => tag.toLocaleLowerCase().trim())
-    .filter((tag) => tag.length <= 20 && tag.length > 0)
-    .slice(0, 5);
-  return [...new Set(tags)];
+  const answer = await callMistral(
+    [
+      {
+        role: "system",
+        content:
+          'Tu es un assistant qui suggère des tags pour une fiche de connaissances sur le développement web. Propose entre 3 et 5 tags, en commençant par la technologie principale de la fiche. Privilégie des tags d\'un seul mot, généraux et réutilisables sur d\'autres fiches, en français ou en anglais selon l\'usage. Chaque tag ne contient que des lettres minuscules, des chiffres ou un tiret, par exemple react-router. Réponds uniquement en JSON, au format {"tags": ["tag1", "tag2"]}.',
+      },
+      { role: "user", content: `Titre : ${title}\n\n${content}` },
+    ],
+    true,
+  );
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(answer);
+  } catch {
+    throw new AppError("La réponse de l'IA est illisible. Réessaie.", 502);
+  }
+  const result = aiTagsSchema.safeParse(parsed);
+  if (!result.success) {
+    console.error(result.error);
+    throw new AppError("La réponse de l'IA est illisible. Réessaie.", 502);
+  }
+  return [...new Set(result.data.tags)].slice(0, 5);
 }

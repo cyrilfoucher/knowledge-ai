@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import {
   CreateKnowledgeSchema,
   UpdateKnowledgeSchema,
-  SuggestTagsInput,
   SuggestTagsSchema,
 } from "../schemas/knowledgeSchema.js";
 import AppError from "../errors/AppError.js";
