@@ -24,9 +24,6 @@ app.use(cookieParser());
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
-app.get("/ip", (req, res) => {
-  res.json({ ip: req.ip, forwardedFor: req.headers["x-forwarded-for"] });
-});
 app.use("/auth", authRoutes);
 app.use("/knowledges", knowledgesRoutes);
 app.use("/explore", exploreRoute);
