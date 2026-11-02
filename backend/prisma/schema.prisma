@@ -52,6 +52,7 @@ model Knowledge {
   tags       Tag[]
   favorites  Favorite[]
   likes      Like[]
+  embedding Unsupported("vector(1024)")?
 
   @@index([authorId])
   @@index([categoryId])
@@ -90,3 +91,5 @@ model Like {
   @@id([userId, knowledgeId])
   @@index([knowledgeId])
 }
+
+

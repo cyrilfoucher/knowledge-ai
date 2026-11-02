@@ -14,6 +14,7 @@ import {
 } from "../utils/knowledgeFilters.js";
 import { summarizeText } from "./aiService.js";
 import { addUserState } from "./userStateService.js";
+import { saveKnowledgeEmbedding } from "./embeddingService.js";
 
 export async function createKnowledge(
   authorId: string,
@@ -56,6 +57,11 @@ export async function createKnowledge(
       tags: { select: { id: true, name: true } },
     },
   });
+  await saveKnowledgeEmbedding(
+    publication.id,
+    publication.title,
+    publication.content,
+  );
   return publication;
 }
 
@@ -173,6 +179,16 @@ export async function updateKnowledgeById(
       tags: { select: { id: true, name: true } },
     },
   });
+  if (
+    updateKnowledge.title !== knowledge.title ||
+    updateKnowledge.content !== knowledge.content
+  ) {
+    await saveKnowledgeEmbedding(
+      updateKnowledge.id,
+      updateKnowledge.title,
+      updateKnowledge.content,
+    );
+  }
   return updateKnowledge;
 }
 

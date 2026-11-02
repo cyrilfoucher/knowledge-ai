@@ -93,7 +93,6 @@ export async function suggestTagsController(req: Request, res: Response) {
   }
   const data = SuggestTagsSchema.parse(req.body);
   const existingTags = await getPopularTagNames(50);
-  console.log("Tags existants :", existingTags);
   const tags = await suggestTags(data.title, data.content, existingTags);
   return res.status(200).json({ tags });
 }

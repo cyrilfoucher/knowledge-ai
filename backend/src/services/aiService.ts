@@ -96,3 +96,36 @@ export async function suggestTags(
   }
   return [...new Set(result.data.tags)].slice(0, 5);
 }
+
+export async function createEmbedding(text: string): Promise<number[]> {
+  const apiKey = process.env.MISTRAL_API_KEY;
+  if (!apiKey) {
+    throw new Error("MISTRAL_API_KEY manquante dans le .env");
+  }
+  try {
+    const response = await fetch("https://api.mistral.ai/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ model: "mistral-embed", input: [text] }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) {
+      console.error(response.status, await response.text());
+      throw new AppError(
+        "Le service d'IA est indisponible pour le moment. Réessaie plus tard.",
+        503,
+      );
+    }
+    const data = (await response.json()) as { data: { embedding: number[] }[] };
+    return data.data[0].embedding;
+  } catch (error) {
+    console.error("Appel à Mistral impossible :", error);
+    throw new AppError(
+      "Le service d'IA est indisponible pour le moment. Réessaie plus tard.",
+      503,
+    );
+  }
+}
