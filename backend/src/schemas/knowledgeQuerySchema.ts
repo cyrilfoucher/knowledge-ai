@@ -18,3 +18,7 @@ export const KnowledgeQuerySchema = PaginationQuerySchema.extend({
   sort: z.enum(["recent", "oldest", "title", "popular"]).default("recent"),
 });
 export type KnowledgeQueryInput = z.infer<typeof KnowledgeQuerySchema>;
+
+export const SemanticSearchQuerySchema = z.object({
+  q: z.string().trim().min(2).max(200),
+});
