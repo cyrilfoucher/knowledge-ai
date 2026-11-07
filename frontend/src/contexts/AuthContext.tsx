@@ -1,6 +1,8 @@
 import type { Utilisateur } from "../types/auth";
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
 import api from "../api/axios";
 
 interface AuthContextType {
@@ -52,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await api.patch<{ user: Utilisateur }>("/auth/me", { name, email });
     setUser(response.data.user);
   };
+
   useEffect(() => {
     const checkCookie = async () => {
       try {
@@ -65,6 +68,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     checkCookie();
   }, []);
+
+  useEffect(() => {
+    const id = api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        const url = isAxiosError(error) ? error.config?.url : undefined;
+        const isAuthRequest = url === "/auth/me" || url === "/auth/login";
+        if (isAxiosError(error) && error.response?.status === 401 && !isAuthRequest) {
+          setUser(null);
+          toast.error("Ta session a expiré, reconnecte-toi.", { id: "session-expired" });
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => api.interceptors.response.eject(id);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
