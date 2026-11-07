@@ -13,7 +13,10 @@ async function callMistral(
   const apiKey = process.env.MISTRAL_API_KEY;
   const model = process.env.AI_MODEL;
   if (!apiKey || !model) {
-    throw new Error("MISTRAL_API_KEY ou AI_MODEL manquant dans le .env");
+    throw new AppError(
+      "Le service d'IA n'est pas configuré sur ce serveur.",
+      503,
+    );
   }
   try {
     const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
@@ -100,7 +103,10 @@ export async function suggestTags(
 export async function createEmbedding(text: string): Promise<number[]> {
   const apiKey = process.env.MISTRAL_API_KEY;
   if (!apiKey) {
-    throw new Error("MISTRAL_API_KEY manquante dans le .env");
+    throw new AppError(
+      "Le service d'IA n'est pas configuré sur ce serveur.",
+      503,
+    );
   }
   try {
     const response = await fetch("https://api.mistral.ai/v1/embeddings", {
