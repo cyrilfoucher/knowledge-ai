@@ -20,6 +20,7 @@ function ExplorePage() {
   const sort = searchParams.get("sort") ?? "recent";
   const category = searchParams.get("category") ?? "";
   const tag = searchParams.get("tag") ?? "";
+  const isSemantic = searchParams.get("mode") === "semantic";
 
   function updateParams(values: Record<string, string>) {
     const next = new URLSearchParams(searchParams);
@@ -32,12 +33,33 @@ function ExplorePage() {
     }
     setSearchParams(next);
   }
+  function changeMode(semantic: boolean) {
+    updateParams({ mode: semantic ? "semantic" : "", page: "", category: "", tag: "", sort: "" });
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0);
     async function loadingKnowledge() {
       try {
         setError(null);
+        if (isSemantic) {
+          if (q.length < 2) {
+            setData(null);
+            return;
+          }
+          const response = await api.get<{ knowledges: ExploreResponse["knowledges"] }>(
+            "/explore/search",
+            { params: { q } }
+          );
+          setData({
+            knowledges: response.data.knowledges,
+            total: response.data.knowledges.length,
+            totalPages: 1,
+            page: 1,
+            limit,
+          });
+          return;
+        }
         const response = await api.get<ExploreResponse>("/explore", {
           params: Object.fromEntries(searchParams),
         });
@@ -58,6 +80,9 @@ function ExplorePage() {
       return <Alert variant="danger">{error}</Alert>;
     }
     if (!data || data.knowledges.length === 0) {
+      if (isSemantic && q.length < 2) {
+        return <p className="text-muted">Décris ce que tu cherches, puis lance la recherche.</p>;
+      }
       if (q || category || tag) {
         return <p className="text-muted">Aucune fiche ne correspond à ta recherche</p>;
       }
@@ -71,10 +96,12 @@ function ExplorePage() {
             <span className="font-semibold text-heading">{data.total}</span>{" "}
             {data.total > 1 ? "fiches" : "fiche"}
           </p>
-          <PageSizeSelect
-            value={limit}
-            onChange={(value) => updateParams({ limit: String(value), page: "" })}
-          />
+          {!isSemantic && (
+            <PageSizeSelect
+              value={limit}
+              onChange={(value) => updateParams({ limit: String(value), page: "" })}
+            />
+          )}
         </div>
         <ul className="space-y-4">
           {data.knowledges.map((knowledge) => (
@@ -83,16 +110,18 @@ function ExplorePage() {
                 knowledge={knowledge}
                 to={`/explore/${knowledge.id}`}
                 showAuthor
-                onTagClick={(name) => updateParams({ tag: name, page: "" })}
+                onTagClick={(name) => updateParams({ tag: name, page: "", mode: "" })}
               />
             </li>
           ))}
         </ul>
-        <Pagination
-          page={page}
-          totalPages={data.totalPages}
-          onPageChange={(newPage) => updateParams({ page: String(newPage) })}
-        />
+        {!isSemantic && (
+          <Pagination
+            page={page}
+            totalPages={data.totalPages}
+            onPageChange={(newPage) => updateParams({ page: String(newPage) })}
+          />
+        )}
       </>
     );
   }
@@ -100,8 +129,35 @@ function ExplorePage() {
   return (
     <>
       <PageHeader title="Découvrir" subtitle="Les connaissances partagées par la communauté" />
+      <div className="mb-3 inline-flex gap-1 rounded-lg border border-border p-1">
+        <button
+          type="button"
+          onClick={() => changeMode(false)}
+          className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+            isSemantic ? "text-muted hover:text-heading" : "bg-primary/15 text-primary"
+          }`}
+        >
+          Par mots-clés
+        </button>
+        <button
+          type="button"
+          onClick={() => changeMode(true)}
+          className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+            isSemantic ? "bg-primary/15 text-primary" : "text-muted hover:text-heading"
+          }`}
+        >
+          Intelligente
+        </button>
+      </div>
       <div className="mb-6">
-        <KnowledgeFilter q={q} sort={sort} category={category} onChange={updateParams} tag={tag} />
+        <KnowledgeFilter
+          q={q}
+          sort={sort}
+          category={category}
+          onChange={updateParams}
+          tag={tag}
+          searchOnly={isSemantic}
+        />
       </div>
       {renderContent()}
     </>

@@ -10,9 +10,17 @@ interface KnowledgeFiltersProps {
   sort: string;
   category: string;
   tag: string;
+  searchOnly?: boolean;
 }
 
-function KnowledgeFilters({ q, onChange, sort, category, tag }: KnowledgeFiltersProps) {
+function KnowledgeFilters({
+  q,
+  onChange,
+  sort,
+  category,
+  tag,
+  searchOnly = false,
+}: KnowledgeFiltersProps) {
   const [search, setSearch] = useState(q);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -40,34 +48,38 @@ function KnowledgeFilters({ q, onChange, sort, category, tag }: KnowledgeFilters
           <input
             type="search"
             value={search}
-            placeholder="Rechercher une fiche..."
+            placeholder={searchOnly ? "Décris ta recherche à l'IA" : "Rechercher une fiche..."}
             onChange={(event) => setSearch(event.target.value)}
             className="flex-1  min-w-0 rounded-lg border border-border bg-transparent px-3 py-2"
           />
           <Button type="submit">Rechercher</Button>
         </div>
-        <select
-          value={category}
-          onChange={(event) => onChange({ category: event.target.value, page: "" })}
-          className="rounded-lg border border-border bg-transparent px-3 py-2"
-        >
-          <option value="">Toutes les catégories</option>
-          {categories.map((categorie) => (
-            <option key={categorie.id} value={categorie.id}>
-              {categorie.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={sort}
-          onChange={(event) => onChange({ sort: event.target.value, page: "" })}
-          className="rounded-lg border border-border bg-transparent px-3 py-2"
-        >
-          <option value="recent">Plus récentes</option>
-          <option value="oldest">Plus anciennes</option>
-          <option value="title">Titre (A → Z)</option>
-          <option value="popular">Plus aimées</option>
-        </select>
+        {!searchOnly && (
+          <>
+            <select
+              value={category}
+              onChange={(event) => onChange({ category: event.target.value, page: "" })}
+              className="rounded-lg border border-border bg-transparent px-3 py-2"
+            >
+              <option value="">Toutes les catégories</option>
+              {categories.map((categorie) => (
+                <option key={categorie.id} value={categorie.id}>
+                  {categorie.name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sort}
+              onChange={(event) => onChange({ sort: event.target.value, page: "" })}
+              className="rounded-lg border border-border bg-transparent px-3 py-2"
+            >
+              <option value="recent">Plus récentes</option>
+              <option value="oldest">Plus anciennes</option>
+              <option value="title">Titre (A → Z)</option>
+              <option value="popular">Plus aimées</option>
+            </select>
+          </>
+        )}
       </form>
       {tag && (
         <div className="flex items-center gap-2 text-sm">
