@@ -16,6 +16,7 @@ import FavoriteButton from "../components/knowledge/FavoriteButton";
 import LikeButton from "../components/knowledge/LikeButton";
 import BackButton from "../components/ui/BackButton";
 import MarkdownContent from "../components/knowledge/MarkdownContent";
+import KnowledgeCard from "../components/knowledge/KnowledgeCard";
 
 function ExploreKnowledgeDetailPage() {
   const { id } = useParams();
@@ -29,7 +30,9 @@ function ExploreKnowledgeDetailPage() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [moderationError, setModerationError] = useState<string | null>(null);
+  const [similar, setSimilar] = useState<PublicKnowledge[] | []>([]);
   useEffect(() => {
+    window.scrollTo(0, 0);
     async function callKnowledge() {
       try {
         const response = await api.get<{ knowledge: PublicKnowledge }>(`/explore/${id}`);
@@ -42,6 +45,20 @@ function ExploreKnowledgeDetailPage() {
     }
     callKnowledge();
   }, [id]);
+
+  useEffect(() => {
+    setSimilar([]);
+    try {
+      async function getSimilar() {
+        const response = await api.get<{ knowledges: PublicKnowledge[] }>(`/explore/${id}/similar`);
+        setSimilar(response.data.knowledges);
+      }
+      getSimilar();
+    } catch {
+      //En cas d'erreur , aucun affichage
+    }
+  }, []);
+
   async function handleModeration() {
     if (reason.trim().length < 10) {
       setModerationError("Le motif doit contenir au moins 10 caractères.");
@@ -177,6 +194,18 @@ function ExploreKnowledgeDetailPage() {
       <BackButton fallback="/explore" />
       <PageHeader title="Détails" />
       {renderContent()}
+      {similar.length > 0 && (
+        <section className="mt-8">
+          <h2 className="mb-4 text-lg font-semibold text-heading">À lire aussi</h2>
+          <ul className="space-y-4">
+            {similar.map((item) => (
+              <li key={item.id}>
+                <KnowledgeCard knowledge={item} to={`/explore/${item.id}`} showAuthor />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </>
   );
 }

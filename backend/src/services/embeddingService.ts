@@ -27,3 +27,15 @@ ORDER BY "embedding" <=> ${JSON.stringify(vector)}::vector LIMIT ${limit}`;
     .filter((row) => row.distance <= bestDistance + 0.01)
     .map((row) => row.id);
 }
+
+export async function findSimilarToKnowledgeIds(id: string, limit: number) {
+  const rows = await prisma.$queryRaw<{ id: string }[]>` SELECT "id" 
+  FROM "Knowledge" 
+  WHERE "id"<>${id} 
+  AND "visibility"='PUBLIC' 
+  AND "embedding" IS NOT NULL 
+  ORDER BY "embedding" <=>(SELECT "embedding" FROM "Knowledge" WHERE "id"=${id})
+  LIMIT ${limit}`;
+
+  return rows.map((row) => row.id);
+}

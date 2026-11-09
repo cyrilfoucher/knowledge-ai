@@ -7,6 +7,7 @@ import {
   getPublicKnowledges,
   getPublicKnowledgeById,
   searchPublicKnowledges,
+  getSimilarPublicKnowledges,
 } from "../services/exploreService.js";
 
 export async function getPublicKnowledgesController(
@@ -45,5 +46,16 @@ export async function searchPublicKnowledgesController(
 ) {
   const query = SemanticSearchQuerySchema.parse(req.query);
   const knowledges = await searchPublicKnowledges(query.q, req.user?.userId);
+  return res.status(200).json({ knowledges });
+}
+
+export async function getSimilarPublicKnowledgesController(
+  req: Request<{ id: string }>,
+  res: Response,
+) {
+  const knowledges = await getSimilarPublicKnowledges(
+    req.params.id,
+    req.user?.userId,
+  );
   return res.status(200).json({ knowledges });
 }

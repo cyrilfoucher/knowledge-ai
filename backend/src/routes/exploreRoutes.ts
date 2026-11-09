@@ -3,6 +3,7 @@ import {
   getPublicKnowledgeByIdController,
   getPublicKnowledgesController,
   searchPublicKnowledgesController,
+  getSimilarPublicKnowledgesController,
 } from "../controllers/exploreController.js";
 import optionalAuthMiddleware from "../middlewares/optionalAuthMiddleware.js";
 import { aiRateLimit } from "../middlewares/aiRateLimit.js";
@@ -16,5 +17,10 @@ router.get(
   searchPublicKnowledgesController,
 );
 router.get("/:id", optionalAuthMiddleware, getPublicKnowledgeByIdController);
+router.get(
+  "/:id/similar",
+  optionalAuthMiddleware,
+  getSimilarPublicKnowledgesController,
+);
 
 export default router;

@@ -7,7 +7,10 @@ import {
 import type { KnowledgeQueryInput } from "../schemas/knowledgeQuerySchema.js";
 import type { Prisma } from "../generated/prisma/client.js";
 import { addUserState } from "./userStateService.js";
-import { findSimilarKnowledgeIds } from "./embeddingService.js";
+import {
+  findSimilarKnowledgeIds,
+  findSimilarToKnowledgeIds,
+} from "./embeddingService.js";
 
 export async function getPublicKnowledges(
   query: KnowledgeQueryInput,
@@ -37,10 +40,9 @@ export async function getPublicKnowledges(
   return { knowledges: await addUserState(knowledges, userId), total };
 }
 
-export async function searchPublicKnowledges(q: string, userId?: string) {
-  const ids = await findSimilarKnowledgeIds(q, 10);
+async function getPublicKnowledgeByIds(id: string[], userId?: string) {
   const knowledges = await prisma.knowledge.findMany({
-    where: { id: { in: ids } },
+    where: { id: { in: id } },
     include: {
       author: { select: { name: true } },
       category: { select: { id: true, name: true } },
@@ -48,8 +50,18 @@ export async function searchPublicKnowledges(q: string, userId?: string) {
       _count: { select: { likes: true } },
     },
   });
-  knowledges.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+  knowledges.sort((a, b) => id.indexOf(a.id) - id.indexOf(b.id));
   return await addUserState(knowledges, userId);
+}
+
+export async function searchPublicKnowledges(q: string, userId?: string) {
+  const ids = await findSimilarKnowledgeIds(q, 10);
+  return getPublicKnowledgeByIds(ids, userId);
+}
+
+export async function getSimilarPublicKnowledges(id: string, userId?: string) {
+  const ids = await findSimilarToKnowledgeIds(id, 3);
+  return getPublicKnowledgeByIds(ids, userId);
 }
 
 export async function getPublicKnowledgeById(id: string, userId?: string) {
