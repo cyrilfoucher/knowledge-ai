@@ -39,3 +39,26 @@ export async function findSimilarToKnowledgeIds(id: string, limit: number) {
 
   return rows.map((row) => row.id);
 }
+
+export async function findKnowledgesForQuestion(
+  question: string,
+  userId?: string,
+) {
+  const vector = await createEmbedding(question);
+  const rows = await prisma.$queryRaw<
+    {
+      id: string;
+      title: string;
+      content: string;
+      distance: number;
+      visibility: string;
+    }[]
+  >`SELECT "id", "title", "content","visibility", "embedding" <=> ${JSON.stringify(vector)}::vector AS "distance" FROM "Knowledge" WHERE "embedding" IS NOT NULL AND ("visibility" = 'PUBLIC' OR "authorId" = ${userId ?? ""})
+ORDER BY "distance"
+LIMIT 5`;
+  if (rows.length === 0) {
+    return [];
+  }
+  const bestDistance = rows[0].distance;
+  return rows.filter((row) => row.distance <= bestDistance + 0.03);
+}
