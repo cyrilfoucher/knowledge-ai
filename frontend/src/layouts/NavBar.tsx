@@ -64,6 +64,9 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
           <NavLink to="/explore" className={desktopLink}>
             Découvrir
           </NavLink>
+          <NavLink to="/assistant" className={desktopLink}>
+            Assistant
+          </NavLink>
           {isAdmin && (
             <NavLink to="/admin" className={desktopLink}>
               Administration
@@ -155,6 +158,9 @@ function Navbar({ theme, onToggleTheme }: NavbarProps) {
 
           <NavLink to="/explore" onClick={closeMenus} className={mobileLink}>
             Découvrir
+          </NavLink>
+          <NavLink to="/assistant" onClick={closeMenus} className={mobileLink}>
+            Assistant
           </NavLink>
 
           {isAuthenticated ? (

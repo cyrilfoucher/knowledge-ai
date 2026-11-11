@@ -22,6 +22,7 @@ const AdminPage = lazy(() => import("../pages/AdminPage"));
 const AboutPage = lazy(() => import("../pages/AboutPage"));
 const FavoritesPage = lazy(() => import("../pages/FavoritesPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const AssistantPage = lazy(() => import("../pages/AssistantPage"));
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/explore/:id" element={<ExploreDetailPage />} />
+        <Route path="/assistant" element={<AssistantPage />} />
         <Route path="/a-propos" element={<AboutPage />} />
         <Route path="/users/:id" element={<ProfilePage />} />
         <Route element={<GuestRoute />}>
