@@ -31,7 +31,8 @@ services:
       DEMO_EMAIL: demo@example.com
       DEMO_ADMIN_EMAIL: admin@example.com
       MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
-      AI_MODEL: ${AI_MODEL:-mistral-small-latest}
+      AI_MODEL: ${AI_MODEL:-ministral-8b-2512}
+      AI_ASSISTANT_MODEL: ${AI_ASSISTANT_MODEL:-ministral-14b-2512}
     ports:
       - "5001:5001"
     depends_on:
